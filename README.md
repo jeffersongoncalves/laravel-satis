@@ -2,8 +2,6 @@
 
 A Laravel package for managing private Composer repositories powered by [Satis](https://github.com/composer/satis).
 
-This is the core package that provides all the backend functionality. For a complete admin UI, see [filament-satis](https://github.com/jeffersongoncalves/filament-satis).
-
 ## Features
 
 - **Package Management** — Add and manage Composer & GitHub package sources
@@ -221,16 +219,6 @@ Set the **Content type** to `application/json` and optionally configure a **Secr
 | `satis:build` | Build Satis repository from packages |
 | `satis:validate` | Validate package credentials and builds |
 | `dependency:packages` | Process and sync package dependencies |
-
-## Using with Filament
-
-For a complete admin UI, install the Filament plugin:
-
-```bash
-composer require jeffersongoncalves/filament-satis
-```
-
-The Filament plugin depends on this package and provides Resource pages for managing packages, tokens, releases, downloads, and dependencies through the Filament admin panel.
 
 ## License
 
