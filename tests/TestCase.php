@@ -34,16 +34,22 @@ abstract class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations(): void
     {
-        $migrationsPath = __DIR__.'/../database/migrations';
+        $stubsPath = __DIR__.'/../database/migrations';
+        $tempPath = sys_get_temp_dir().'/laravel-satis-migrations';
 
-        foreach (glob($migrationsPath.'/*.php.stub') as $stub) {
-            $migrationPath = str_replace('.php.stub', '.php', $stub);
+        if (! is_dir($tempPath)) {
+            mkdir($tempPath, 0755, true);
+        }
 
-            if (! file_exists($migrationPath)) {
-                copy($stub, $migrationPath);
+        foreach (glob($stubsPath.'/*.php.stub') as $stub) {
+            $filename = basename(str_replace('.php.stub', '.php', $stub));
+            $target = $tempPath.'/'.$filename;
+
+            if (! file_exists($target)) {
+                copy($stub, $target);
             }
         }
 
-        $this->loadMigrationsFrom($migrationsPath);
+        $this->loadMigrationsFrom($tempPath);
     }
 }
