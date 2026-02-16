@@ -52,6 +52,10 @@ class LaravelSatisServiceProvider extends PackageServiceProvider
 
     protected function registerAuthProvider(): void
     {
+        if (! config('laravel-satis.auth')) {
+            return;
+        }
+
         Auth::provider(
             config('laravel-satis.auth.provider'),
             fn ($app, $config) => new EloquentTokenProvider(
@@ -75,6 +79,10 @@ class LaravelSatisServiceProvider extends PackageServiceProvider
     protected function registerObservers(): void
     {
         $models = config('laravel-satis.models');
+
+        if (! $models) {
+            return;
+        }
 
         $models['package']::observe(PackageObserver::class);
         $models['token']::observe(TokenObserver::class);

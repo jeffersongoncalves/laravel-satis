@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use JeffersonGoncalves\LaravelSatis\Concerns\GenerateCode;
 use JeffersonGoncalves\LaravelSatis\Concerns\HasTenancy;
+use JeffersonGoncalves\LaravelSatis\Database\Factories\PackageFactory;
 use JeffersonGoncalves\LaravelSatis\Enums\PackageType;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
@@ -16,6 +17,11 @@ class Package extends Model
     use GenerateCode;
     use HasFactory;
     use HasTenancy;
+
+    protected static function newFactory(): PackageFactory
+    {
+        return PackageFactory::new();
+    }
 
     protected $fillable = [
         'name',

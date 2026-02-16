@@ -2,18 +2,25 @@
 
 namespace JeffersonGoncalves\LaravelSatis\Models;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use JeffersonGoncalves\LaravelSatis\Concerns\GenerateCode;
 use JeffersonGoncalves\LaravelSatis\Concerns\HasTenancy;
+use JeffersonGoncalves\LaravelSatis\Database\Factories\TokenFactory;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
-class Token extends Model
+class Token extends Model implements Authenticatable
 {
     use GenerateCode;
     use HasFactory;
     use HasTenancy;
+
+    protected static function newFactory(): TokenFactory
+    {
+        return TokenFactory::new();
+    }
 
     protected $fillable = [
         'name',
@@ -55,5 +62,25 @@ class Token extends Model
     public function getAuthPassword(): string
     {
         return $this->token;
+    }
+
+    public function getAuthPasswordName(): string
+    {
+        return 'token';
+    }
+
+    public function getRememberToken(): ?string
+    {
+        return null;
+    }
+
+    public function setRememberToken($value): void
+    {
+        //
+    }
+
+    public function getRememberTokenName(): string
+    {
+        return '';
     }
 }

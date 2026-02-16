@@ -6,11 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use JeffersonGoncalves\LaravelSatis\Database\Factories\PackageReleaseFactory;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 class PackageRelease extends Model
 {
     use HasFactory;
+
+    protected static function newFactory(): PackageReleaseFactory
+    {
+        return PackageReleaseFactory::new();
+    }
 
     protected $fillable = [
         'package_id',
