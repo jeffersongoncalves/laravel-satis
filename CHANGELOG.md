@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.4 - 2026-02-17
+
+### Fixed
+
+- Updated Boost guidelines with missing config options (`satis_binary`, `auth`, `tenancy.ownership_relationship`, `secure_http`)
+- Added `satis:install` command to Boost artisan commands reference
+- Added Installation section to SKILL.md with `satis:install` usage
+- Removed `setHomepage` from SatisConfig example (auto-injected during builds)
+
 ## 1.3.3 - 2026-02-17
 
 ### Changed
@@ -28,4 +37,5 @@ All notable changes to this project will be documented in this file.
   - Prompts for repository name
   - Supports `--name` and `--force` options
   - Confirms before overwriting an existing `satis.json`
+  
 - PHPStan/Larastan static analysis configuration (`phpstan.neon.dist` + baseline)
