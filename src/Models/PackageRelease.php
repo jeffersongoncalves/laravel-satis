@@ -15,7 +15,7 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property int $id
  * @property int $package_id
  * @property string $version
- * @property string|null $time
+ * @property \Illuminate\Support\Carbon|null $time
  * @property string|null $type
  * @property string|null $description
  * @property string|null $homepage
@@ -34,6 +34,10 @@ class PackageRelease extends Model
     {
         return PackageReleaseFactory::new();
     }
+
+    protected $casts = [
+        'time' => 'datetime',
+    ];
 
     protected $fillable = [
         'package_id',
