@@ -31,6 +31,12 @@ parameters:
 			path: src/Actions/ValidatePackageCredentials.php
 
 		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/GithubWebhookController.php
+
+		-
 			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$webhook_secret\.$#'
 			identifier: property.notFound
 			count: 1
