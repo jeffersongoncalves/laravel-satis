@@ -29,6 +29,7 @@ return [
     |
     | Prefix applied to all tables created by the package to avoid
     | collision with existing application tables.
+    | Set to null to use table names without a prefix.
     |
     */
     'table_prefix' => 'satis_',

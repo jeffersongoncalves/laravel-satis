@@ -22,6 +22,14 @@ it('uses the correct table name with prefix', function () {
     expect($download->getTable())->toBe('satis_package_downloads');
 });
 
+it('uses table name without prefix when table_prefix is null', function () {
+    config(['satis.table_prefix' => null]);
+
+    $download = new PackageDownload;
+
+    expect($download->getTable())->toBe('package_downloads');
+});
+
 it('casts downloads to integer', function () {
     $package = Package::factory()->create();
     $download = PackageDownload::create([

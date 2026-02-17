@@ -2,22 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.4.2 - 2026-02-17
+
+### Changed
+
+- Allow `table_prefix` config to be `null` for unprefixed table names
+- Added null `table_prefix` tests for all models (Package, Token, Dependency, PackageRelease, PackageDownload, Packagist)
+
 ## 1.4.1 - 2026-02-17
 
 ### Added
 
 - Support for `null` `composer_prefix` — serves composer routes without a URL prefix (e.g. `/packages.json` instead of `/satis/packages.json`)
 - Handles tenancy prefix correctly when `composer_prefix` is `null`
-
-### Usage
-
-```php
-// config/satis.php
-'routes' => [
-    'composer_prefix' => null, // routes served at root
-],
-
-```
 ## 1.4.0 - 2026-02-17
 
 ### Removed

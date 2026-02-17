@@ -22,6 +22,14 @@ it('uses the correct table name with prefix', function () {
     expect($release->getTable())->toBe('satis_package_releases');
 });
 
+it('uses table name without prefix when table_prefix is null', function () {
+    config(['satis.table_prefix' => null]);
+
+    $release = new PackageRelease;
+
+    expect($release->getTable())->toBe('package_releases');
+});
+
 it('belongs to a package', function () {
     $package = Package::factory()->create();
     $release = PackageRelease::factory()->create(['package_id' => $package->id]);

@@ -20,6 +20,14 @@ it('uses the correct table name with prefix', function () {
     expect($token->getTable())->toBe('satis_tokens');
 });
 
+it('uses table name without prefix when table_prefix is null', function () {
+    config(['satis.table_prefix' => null]);
+
+    $token = new Token;
+
+    expect($token->getTable())->toBe('tokens');
+});
+
 it('hides token in array representation', function () {
     $token = Token::factory()->create();
 

@@ -33,6 +33,14 @@ it('uses custom table prefix from config', function () {
     expect($package->getTable())->toBe('custom_packages');
 });
 
+it('uses table name without prefix when table_prefix is null', function () {
+    config(['satis.table_prefix' => null]);
+
+    $package = new Package;
+
+    expect($package->getTable())->toBe('packages');
+});
+
 it('casts type to PackageType enum', function () {
     $package = Package::factory()->create(['type' => 'composer']);
 

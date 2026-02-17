@@ -20,6 +20,14 @@ it('uses the correct table name with prefix', function () {
     expect($packagist->getTable())->toBe('satis_packagists');
 });
 
+it('uses table name without prefix when table_prefix is null', function () {
+    config(['satis.table_prefix' => null]);
+
+    $packagist = new Packagist;
+
+    expect($packagist->getTable())->toBe('packagists');
+});
+
 it('casts type to DependencyType enum', function () {
     $packagist = Packagist::create([
         'name' => 'test/package',

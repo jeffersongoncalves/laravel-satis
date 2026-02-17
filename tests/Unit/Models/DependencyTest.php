@@ -24,6 +24,14 @@ it('uses the correct table name with prefix', function () {
     expect($dependency->getTable())->toBe('satis_dependencies');
 });
 
+it('uses table name without prefix when table_prefix is null', function () {
+    config(['satis.table_prefix' => null]);
+
+    $dependency = new Dependency;
+
+    expect($dependency->getTable())->toBe('dependencies');
+});
+
 it('casts versions to array', function () {
     $dependency = Dependency::create([
         'name' => 'test/package',
