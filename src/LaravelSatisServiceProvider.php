@@ -10,6 +10,14 @@ use JeffersonGoncalves\LaravelSatis\Commands\SatisClean;
 use JeffersonGoncalves\LaravelSatis\Commands\SatisSanitize;
 use JeffersonGoncalves\LaravelSatis\Commands\SatisTokenBuild;
 use JeffersonGoncalves\LaravelSatis\Commands\SatisValidate;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\DependencyContract;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\DependencyPackageReleaseContract;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageContract;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageDownloadContract;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageReleaseContract;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageTokenContract;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackagistContract;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\TokenContract;
 use JeffersonGoncalves\LaravelSatis\Observers\DependencyObserver;
 use JeffersonGoncalves\LaravelSatis\Observers\PackageObserver;
 use JeffersonGoncalves\LaravelSatis\Observers\TokenObserver;
@@ -49,9 +57,28 @@ class LaravelSatisServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        $this->registerModelBindings();
         $this->registerAuthProvider();
         $this->registerObservers();
         $this->registerSchedule();
+    }
+
+    protected function registerModelBindings(): void
+    {
+        $bindings = [
+            PackageContract::class => 'package',
+            TokenContract::class => 'token',
+            DependencyContract::class => 'dependency',
+            PackageReleaseContract::class => 'package_release',
+            PackageDownloadContract::class => 'package_download',
+            DependencyPackageReleaseContract::class => 'dependency_package_release',
+            PackageTokenContract::class => 'package_token',
+            PackagistContract::class => 'packagist',
+        ];
+
+        foreach ($bindings as $contract => $configKey) {
+            $this->app->bind($contract, config("satis.models.{$configKey}"));
+        }
     }
 
     protected function registerAuthProvider(): void

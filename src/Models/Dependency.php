@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\DependencyContract;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 /**
@@ -18,7 +19,7 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, DependencyPackageRelease> $packageReleaseRequires
  * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageRelease> $packageReleases
  */
-class Dependency extends Model
+class Dependency extends Model implements DependencyContract
 {
     protected $fillable = [
         'name',

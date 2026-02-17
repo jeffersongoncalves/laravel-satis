@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use JeffersonGoncalves\LaravelSatis\Database\Factories\PackageReleaseFactory;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageReleaseContract;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 /**
@@ -26,7 +27,7 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, DependencyPackageRelease> $packageReleaseRequires
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Dependency> $dependencies
  */
-class PackageRelease extends Model
+class PackageRelease extends Model implements PackageReleaseContract
 {
     use HasFactory;
 

@@ -4,6 +4,7 @@ namespace JeffersonGoncalves\LaravelSatis\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\DependencyPackageReleaseContract;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 /**
@@ -18,7 +19,7 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property-read PackageRelease $packageRelease
  * @property-read Dependency $dependency
  */
-class DependencyPackageRelease extends Pivot
+class DependencyPackageRelease extends Pivot implements DependencyPackageReleaseContract
 {
     protected $fillable = [
         'package_id',

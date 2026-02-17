@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use JeffersonGoncalves\LaravelSatis\Concerns\GenerateCode;
 use JeffersonGoncalves\LaravelSatis\Concerns\HasTenancy;
 use JeffersonGoncalves\LaravelSatis\Database\Factories\TokenFactory;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\TokenContract;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 /**
@@ -24,7 +25,7 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property-read string $composer_repository
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Package> $packages
  */
-class Token extends Model implements AuthenticatableContract
+class Token extends Model implements AuthenticatableContract, TokenContract
 {
     use Authenticatable;
     use GenerateCode;

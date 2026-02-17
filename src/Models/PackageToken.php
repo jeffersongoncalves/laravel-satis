@@ -4,6 +4,7 @@ namespace JeffersonGoncalves\LaravelSatis\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageTokenContract;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 /**
@@ -15,7 +16,7 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property-read Package $package
  * @property-read Token $token
  */
-class PackageToken extends Pivot
+class PackageToken extends Pivot implements PackageTokenContract
 {
     protected $fillable = [
         'package_id',

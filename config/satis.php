@@ -40,7 +40,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | Models used by the package. Can be overridden to extend the default
-    | behavior. Custom models must extend the originals.
+    | behavior. Custom models must implement the corresponding contract
+    | interface (see src/Models/Contracts/).
     |
     */
     'models' => [
@@ -50,6 +51,7 @@ return [
         'package_release' => \JeffersonGoncalves\LaravelSatis\Models\PackageRelease::class,
         'package_download' => \JeffersonGoncalves\LaravelSatis\Models\PackageDownload::class,
         'dependency_package_release' => \JeffersonGoncalves\LaravelSatis\Models\DependencyPackageRelease::class,
+        'package_token' => \JeffersonGoncalves\LaravelSatis\Models\PackageToken::class,
         'packagist' => \JeffersonGoncalves\LaravelSatis\Models\Packagist::class,
     ],
 

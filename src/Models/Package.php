@@ -12,6 +12,7 @@ use JeffersonGoncalves\LaravelSatis\Concerns\GenerateCode;
 use JeffersonGoncalves\LaravelSatis\Concerns\HasTenancy;
 use JeffersonGoncalves\LaravelSatis\Database\Factories\PackageFactory;
 use JeffersonGoncalves\LaravelSatis\Enums\PackageType;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageContract;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 /**
@@ -37,7 +38,7 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageRelease> $packageReleases
  * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageDownload> $packageDownloads
  */
-class Package extends Model
+class Package extends Model implements PackageContract
 {
     use GenerateCode;
     use HasFactory;

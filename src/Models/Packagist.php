@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackagistContract;
 
 /**
  * @property int $id
@@ -14,7 +15,7 @@ use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  */
-class Packagist extends Model
+class Packagist extends Model implements PackagistContract
 {
     protected $fillable = [
         'name',
