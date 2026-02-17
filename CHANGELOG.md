@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.4.1 - 2026-02-17
+
+### Added
+
+- Support for `null` `composer_prefix` — serves composer routes without a URL prefix (e.g. `/packages.json` instead of `/satis/packages.json`)
+- Handles tenancy prefix correctly when `composer_prefix` is `null`
+
+### Usage
+
+```php
+// config/satis.php
+'routes' => [
+    'composer_prefix' => null, // routes served at root
+],
+
+```
 ## 1.4.0 - 2026-02-17
 
 ### Removed
@@ -48,8 +64,10 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - `satis:install` command to publish `satis.json` to the project root with interactive setup
+  
   - Prompts for repository name
   - Supports `--name` and `--force` options
   - Confirms before overwriting an existing `satis.json`
   
 - PHPStan/Larastan static analysis configuration (`phpstan.neon.dist` + baseline)
+  
