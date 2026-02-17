@@ -87,16 +87,6 @@ class Token extends Model implements AuthenticatableContract
         });
     }
 
-    public function getAuthIdentifierName(): string
-    {
-        return 'token';
-    }
-
-    public function getAuthIdentifier(): mixed
-    {
-        return $this->token;
-    }
-
     public function getAuthPasswordName(): string
     {
         return 'token';

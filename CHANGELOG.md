@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.8.2 - 2026-02-17
+
+### Token Auth Simplification
+
+- Removed `getAuthIdentifierName()` and `getAuthIdentifier()` overrides from Token model (uses default `id` from Authenticatable trait)
+- Kept only `getAuthPasswordName()` override returning `'token'`
+- Updated `EloquentTokenProvider` to use `getAuthPasswordName()` for token lookup and `getAuthPassword()` for credential validation
+- Updated TokenTest to verify auth password instead of auth identifier
+
 ## 1.8.1 - 2026-02-17
 
 ### Token Model Enhancements

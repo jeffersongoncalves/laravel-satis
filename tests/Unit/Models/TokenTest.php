@@ -53,10 +53,9 @@ it('has a packages relationship', function () {
         ->and($token->packages->first()->id)->toBe($package->id);
 });
 
-it('returns token as auth identifier', function () {
+it('returns token as auth password', function () {
     $token = Token::factory()->create();
 
-    expect($token->getAuthIdentifierName())->toBe('token')
-        ->and($token->getAuthIdentifier())->toBe($token->token)
+    expect($token->getAuthPasswordName())->toBe('token')
         ->and($token->getAuthPassword())->toBe($token->token);
 });

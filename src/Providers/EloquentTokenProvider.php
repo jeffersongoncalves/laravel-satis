@@ -23,7 +23,7 @@ class EloquentTokenProvider implements UserProvider
         $model = $this->createModel();
 
         return $model->newQuery()
-            ->where($model->getAuthIdentifierName(), $identifier)
+            ->where($model->getAuthPasswordName(), $identifier)
             ->first();
     }
 
@@ -63,7 +63,7 @@ class EloquentTokenProvider implements UserProvider
             return false;
         }
 
-        return $user->getAuthIdentifier() === $token;
+        return $user->getAuthPassword() === $token;
     }
 
     public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false): void
