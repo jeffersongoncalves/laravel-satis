@@ -13,6 +13,29 @@ use JeffersonGoncalves\LaravelSatis\Database\Factories\PackageFactory;
 use JeffersonGoncalves\LaravelSatis\Enums\PackageType;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property PackageType $type
+ * @property string $url
+ * @property bool $is_dev
+ * @property string|null $username
+ * @property string|null $password
+ * @property string|null $webhook_secret
+ * @property string|null $reference
+ * @property bool $is_credentials_validated
+ * @property \Illuminate\Support\Carbon|null $credentials_validated_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @property-read string $folder
+ * @property-read string $name_provider
+ * @property-read string $composer_command
+ * @property-read string $webhook_url
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Token> $tokens
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageRelease> $releases
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageDownload> $downloads
+ */
 class Package extends Model
 {
     use GenerateCode;

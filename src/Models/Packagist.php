@@ -7,6 +7,13 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property DependencyType $type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ */
 class Packagist extends Model
 {
     protected $fillable = [

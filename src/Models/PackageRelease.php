@@ -10,6 +10,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use JeffersonGoncalves\LaravelSatis\Database\Factories\PackageReleaseFactory;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
+/**
+ * @property int $id
+ * @property int $package_id
+ * @property string $version
+ * @property string|null $time
+ * @property string|null $type
+ * @property string|null $description
+ * @property string|null $homepage
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @property-read string $name
+ * @property-read Package $package
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Dependency> $dependencies
+ */
 class PackageRelease extends Model
 {
     use HasFactory;

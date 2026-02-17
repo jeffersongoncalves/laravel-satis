@@ -1,46 +1,10 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\PackageRelease\:\:\$package_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Actions/ProcessPackageDependency.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$password\.$#'
-			identifier: property.notFound
+			message: '#^Match arm comparison between JeffersonGoncalves\\LaravelSatis\\Enums\\PackageType\:\:Github and JeffersonGoncalves\\LaravelSatis\\Enums\\PackageType\:\:Github is always true\.$#'
+			identifier: match.alwaysTrue
 			count: 1
 			path: src/Actions/ValidatePackageCredentials.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Actions/ValidatePackageCredentials.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$url\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Actions/ValidatePackageCredentials.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$username\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Actions/ValidatePackageCredentials.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Controllers/GithubWebhookController.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$webhook_secret\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Controllers/GithubWebhookController.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$password\.$#'
@@ -67,82 +31,28 @@ parameters:
 			path: src/Jobs/AddDependencyDefaultByPackage.php
 
 		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Packagist\:\:\$type\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Models/Packagist.php
-
-		-
 			message: '#^Unsafe call to private method JeffersonGoncalves\\LaravelSatis\\Models\\Packagist\:\:getRepoByPackagist\(\) through static\:\:\.$#'
 			identifier: staticClassAccess.privateMethod
 			count: 1
 			path: src/Models/Packagist.php
 
 		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Token\:\:\$token\.$#'
-			identifier: property.notFound
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getAuthIdentifierName\(\)\.$#'
+			identifier: method.notFound
 			count: 2
-			path: src/Models/Token.php
+			path: src/Providers/EloquentTokenProvider.php
 
 		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Dependency\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Observers/DependencyObserver.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$reference\.$#'
-			identifier: property.notFound
+			message: '#^Method JeffersonGoncalves\\LaravelSatis\\Providers\\EloquentTokenProvider\:\:newModelQuery\(\) should return Illuminate\\Database\\Eloquent\\Builder\<TModel of Illuminate\\Database\\Eloquent\\Model\> but returns Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\.$#'
+			identifier: return.type
 			count: 1
-			path: src/Observers/PackageObserver.php
+			path: src/Providers/EloquentTokenProvider.php
 
 		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$webhook_secret\.$#'
-			identifier: property.notFound
+			message: '#^Method JeffersonGoncalves\\LaravelSatis\\Providers\\EloquentTokenProvider\:\:retrieveById\(\) should return Illuminate\\Contracts\\Auth\\Authenticatable\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
 			count: 1
-			path: src/Observers/PackageObserver.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Token\:\:\$token\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Observers/TokenObserver.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Support/SatisConfig.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$password\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Support/SatisConfig.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Support/SatisConfig.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$url\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Support/SatisConfig.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$username\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Support/SatisConfig.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),mixed\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: src/Support/SatisConfig.php
+			path: src/Providers/EloquentTokenProvider.php
 
 		-
 			message: '#^Unsafe usage of new static\(\)\.$#'

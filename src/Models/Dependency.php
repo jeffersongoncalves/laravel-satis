@@ -7,6 +7,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property array|null $versions
+ * @property DependencyType|null $type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageRelease> $packageReleases
+ */
 class Dependency extends Model
 {
     protected $fillable = [

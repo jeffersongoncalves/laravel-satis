@@ -93,12 +93,13 @@ class EloquentTokenProvider implements UserProvider
     {
         $model = $this->createModel();
 
+        /** @var (UserContract&Model)|null $retrievedModel */
         $retrievedModel = $this->newModelQuery($model)->where(
             $model->getAuthIdentifierName(), $identifier
         )->first();
 
         if (! $retrievedModel) {
-            return;
+            return null;
         }
 
         $rememberToken = $retrievedModel->getRememberToken();
@@ -116,13 +117,15 @@ class EloquentTokenProvider implements UserProvider
     {
         $user->setRememberToken($token);
 
-        $timestamps = $user->timestamps;
+        if ($user instanceof Model) {
+            $timestamps = $user->timestamps;
 
-        $user->timestamps = false;
+            $user->timestamps = false;
 
-        $user->save();
+            $user->save();
 
-        $user->timestamps = $timestamps;
+            $user->timestamps = $timestamps;
+        }
     }
 
     /**
@@ -150,6 +153,7 @@ class EloquentTokenProvider implements UserProvider
             }
         }
 
+        /** @var UserContract|null */
         return $query->first();
     }
 

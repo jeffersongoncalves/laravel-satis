@@ -6,6 +6,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
+/**
+ * @property int $id
+ * @property int $package_id
+ * @property int $package_release_id
+ * @property int $dependency_id
+ * @property string|null $version
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @property-read Package $package
+ * @property-read PackageRelease $packageRelease
+ * @property-read Dependency $dependency
+ */
 class DependencyPackageRelease extends Pivot
 {
     protected $fillable = [

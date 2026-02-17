@@ -13,6 +13,18 @@ use JeffersonGoncalves\LaravelSatis\Concerns\HasTenancy;
 use JeffersonGoncalves\LaravelSatis\Database\Factories\TokenFactory;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @property-read string $composer_command
+ * @property-read string $composer_repository
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Package> $packages
+ */
 class Token extends Model implements AuthenticatableContract
 {
     use Authenticatable;
