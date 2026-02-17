@@ -4,7 +4,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
-use JeffersonGoncalves\LaravelSatis\Observers\PackageObserver;
 
 beforeEach(function () {
     if (! Schema::hasColumn('satis_packages', 'team_id')) {

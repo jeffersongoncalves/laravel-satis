@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Auth;
 use JeffersonGoncalves\LaravelSatis\Commands\DependencyPackages;
 use JeffersonGoncalves\LaravelSatis\Commands\SatisBuild;
+use JeffersonGoncalves\LaravelSatis\Commands\SatisInstall;
 use JeffersonGoncalves\LaravelSatis\Commands\SatisValidate;
 use JeffersonGoncalves\LaravelSatis\Observers\DependencyObserver;
 use JeffersonGoncalves\LaravelSatis\Observers\PackageDownloadObserver;
@@ -37,6 +38,7 @@ class LaravelSatisServiceProvider extends PackageServiceProvider
             ])
             ->hasRoutes(['api', 'composer'])
             ->hasCommands([
+                SatisInstall::class,
                 SatisBuild::class,
                 SatisValidate::class,
                 DependencyPackages::class,
