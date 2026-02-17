@@ -121,7 +121,9 @@ return [
     */
     'schedule' => [
         'build' => 'weekly',
+        'token_build' => 'weekly',
         'validate' => 'hourly',
+        'sanitize' => 'daily',
         'dependencies' => 'weekly',
     ],
 

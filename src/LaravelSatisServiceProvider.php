@@ -6,6 +6,9 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Auth;
 use JeffersonGoncalves\LaravelSatis\Commands\DependencyPackages;
 use JeffersonGoncalves\LaravelSatis\Commands\SatisBuild;
+use JeffersonGoncalves\LaravelSatis\Commands\SatisClean;
+use JeffersonGoncalves\LaravelSatis\Commands\SatisSanitize;
+use JeffersonGoncalves\LaravelSatis\Commands\SatisTokenBuild;
 use JeffersonGoncalves\LaravelSatis\Commands\SatisValidate;
 use JeffersonGoncalves\LaravelSatis\Observers\DependencyObserver;
 use JeffersonGoncalves\LaravelSatis\Observers\PackageDownloadObserver;
@@ -38,6 +41,9 @@ class LaravelSatisServiceProvider extends PackageServiceProvider
             ->hasRoutes(['api', 'composer'])
             ->hasCommands([
                 SatisBuild::class,
+                SatisClean::class,
+                SatisSanitize::class,
+                SatisTokenBuild::class,
                 SatisValidate::class,
                 DependencyPackages::class,
             ]);
@@ -106,8 +112,16 @@ class LaravelSatisServiceProvider extends PackageServiceProvider
                 $s->command('satis:build')->{$schedule['build']}();
             }
 
+            if ($schedule['token_build'] ?? null) {
+                $s->command('satis:token-build')->{$schedule['token_build']}();
+            }
+
             if ($schedule['validate'] ?? null) {
                 $s->command('satis:validate')->{$schedule['validate']}();
+            }
+
+            if ($schedule['sanitize'] ?? null) {
+                $s->command('satis:sanitize')->{$schedule['sanitize']}();
             }
 
             if ($schedule['dependencies'] ?? null) {
