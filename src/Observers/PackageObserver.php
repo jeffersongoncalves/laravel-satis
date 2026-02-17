@@ -3,6 +3,7 @@
 namespace JeffersonGoncalves\LaravelSatis\Observers;
 
 use JeffersonGoncalves\LaravelSatis\Enums\PackageType;
+use JeffersonGoncalves\LaravelSatis\Jobs\ValidatePackageCredentialsJob;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
 
 class PackageObserver
@@ -16,6 +17,11 @@ class PackageObserver
         if (empty($package->reference)) {
             $package->reference = $package::generateCode('reference');
         }
+    }
+
+    public function created(Package $package): void
+    {
+        ValidatePackageCredentialsJob::dispatch($package);
     }
 
     public function updated(Package $package): void

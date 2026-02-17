@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Bus;
+use JeffersonGoncalves\LaravelSatis\Jobs\ValidatePackageCredentialsJob;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
 
 it('generates webhook_secret on creation when github type and empty', function () {
@@ -32,6 +34,14 @@ it('preserves existing reference on creation', function () {
     $package = Package::factory()->create(['reference' => 'my-custom-ref']);
 
     expect($package->reference)->toBe('my-custom-ref');
+});
+
+it('dispatches ValidatePackageCredentialsJob on creation', function () {
+    Bus::fake();
+
+    Package::factory()->create();
+
+    Bus::assertDispatched(ValidatePackageCredentialsJob::class);
 });
 
 it('clears credentials validation when url changes', function () {
