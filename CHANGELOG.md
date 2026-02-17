@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.11.0 - 2026-02-17
+
+### Feature
+
+- Add `datetime` cast to `PackageRelease::time` field (converts ISO 8601 string to Carbon instance)
+
 ## 1.10.0 - 2026-02-17
 
 ### What's Changed
