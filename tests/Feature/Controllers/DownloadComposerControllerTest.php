@@ -14,7 +14,7 @@ it('dispatches download jobs for valid packages', function () {
     $response = $this->withHeaders([
         'PHP_AUTH_PW' => $token->token,
     ])->postJson(
-        '/'.config('laravel-satis.routes.api_prefix').'/composer/downloads',
+        '/'.config('satis.routes.api_prefix').'/composer/downloads',
         [
             'downloads' => [
                 ['name' => 'vendor/my-package', 'version' => '1.0.0'],
@@ -36,7 +36,7 @@ it('returns ok for empty downloads', function () {
     $response = $this->withHeaders([
         'PHP_AUTH_PW' => $token->token,
     ])->postJson(
-        '/'.config('laravel-satis.routes.api_prefix').'/composer/downloads',
+        '/'.config('satis.routes.api_prefix').'/composer/downloads',
         ['downloads' => []]
     );
 
@@ -54,7 +54,7 @@ it('skips downloads with missing name or version', function () {
     $response = $this->withHeaders([
         'PHP_AUTH_PW' => $token->token,
     ])->postJson(
-        '/'.config('laravel-satis.routes.api_prefix').'/composer/downloads',
+        '/'.config('satis.routes.api_prefix').'/composer/downloads',
         [
             'downloads' => [
                 ['name' => null, 'version' => '1.0.0'],

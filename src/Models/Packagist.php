@@ -18,6 +18,6 @@ class Packagist extends Model
 
     public function getTable(): string
     {
-        return config('laravel-satis.table_prefix', 'satis_').'packagists';
+        return config('satis.table_prefix', 'satis_').'packagists';
     }
 }

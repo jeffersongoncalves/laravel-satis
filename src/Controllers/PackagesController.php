@@ -17,8 +17,8 @@ class PackagesController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        $disk = Storage::disk(config('laravel-satis.storage_disk'));
-        $storagePath = config('laravel-satis.storage_path', 'satis');
+        $disk = Storage::disk(config('satis.storage_disk'));
+        $storagePath = config('satis.storage_path', 'satis');
 
         $tenantPrefix = $this->getTenantPrefix($request, $token);
         $buildPath = $storagePath.'/'.$tenantPrefix.$token->id;
@@ -27,19 +27,19 @@ class PackagesController extends Controller
         if (! $disk->exists($packagesJson)) {
             return response()->json([
                 'packages' => [],
-                'notify-batch' => url(config('laravel-satis.routes.api_prefix', 'api/satis').'/composer/downloads'),
+                'notify-batch' => url(config('satis.routes.api_prefix', 'api/satis').'/composer/downloads'),
             ]);
         }
 
         $content = json_decode($disk->get($packagesJson), true);
-        $content['notify-batch'] = url(config('laravel-satis.routes.api_prefix', 'api/satis').'/composer/downloads');
+        $content['notify-batch'] = url(config('satis.routes.api_prefix', 'api/satis').'/composer/downloads');
 
         return response()->json($content);
     }
 
     protected function getTenantPrefix(Request $request, $token): string
     {
-        if (! config('laravel-satis.tenancy.enabled')) {
+        if (! config('satis.tenancy.enabled')) {
             return '';
         }
 
@@ -49,7 +49,7 @@ class PackagesController extends Controller
             return $tenantId.'/';
         }
 
-        $fk = config('laravel-satis.tenancy.foreign_key');
+        $fk = config('satis.tenancy.foreign_key');
         $tenantId = $token->{$fk} ?? null;
 
         return $tenantId ? $tenantId.'/' : '';

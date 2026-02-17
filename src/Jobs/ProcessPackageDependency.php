@@ -21,7 +21,7 @@ class ProcessPackageDependency implements ShouldQueue
 
     public function __construct()
     {
-        $queueConfig = config('laravel-satis.queue');
+        $queueConfig = config('satis.queue');
 
         if ($queueConfig['connection'] ?? null) {
             $this->onConnection($queueConfig['connection']);
@@ -34,8 +34,8 @@ class ProcessPackageDependency implements ShouldQueue
 
     public function handle(ProcessPackageDependencyAction $action): void
     {
-        $disk = Storage::disk(config('laravel-satis.storage_disk'));
-        $storagePath = config('laravel-satis.storage_path', 'satis');
+        $disk = Storage::disk(config('satis.storage_disk'));
+        $storagePath = config('satis.storage_path', 'satis');
 
         $packageModel = ModelResolver::package();
         $packages = $packageModel::withoutGlobalScopes()->get();
@@ -48,8 +48,8 @@ class ProcessPackageDependency implements ShouldQueue
     protected function processPackageDependencies($disk, string $storagePath, $package, ProcessPackageDependencyAction $action): void
     {
         $tenantPrefix = '';
-        if (config('laravel-satis.tenancy.enabled')) {
-            $fk = config('laravel-satis.tenancy.foreign_key');
+        if (config('satis.tenancy.enabled')) {
+            $fk = config('satis.tenancy.foreign_key');
             $tenantId = $package->{$fk} ?? null;
             if ($tenantId) {
                 $tenantPrefix = $tenantId.'/';

@@ -29,7 +29,7 @@ class PackageRelease extends Model
 
     public function getTable(): string
     {
-        return config('laravel-satis.table_prefix', 'satis_').'package_releases';
+        return config('satis.table_prefix', 'satis_').'package_releases';
     }
 
     public function package(): BelongsTo
@@ -41,7 +41,7 @@ class PackageRelease extends Model
     {
         return $this->belongsToMany(
             ModelResolver::dependency(),
-            config('laravel-satis.table_prefix', 'satis_').'dependency_package_release',
+            config('satis.table_prefix', 'satis_').'dependency_package_release',
             'package_release_id',
             'dependency_id'
         )->withPivot('version', 'package_id')->withTimestamps();

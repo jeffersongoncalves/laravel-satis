@@ -14,7 +14,7 @@ beforeEach(function () {
 });
 
 it('does not scope queries when tenancy is disabled', function () {
-    config(['laravel-satis.tenancy.enabled' => false]);
+    config(['satis.tenancy.enabled' => false]);
 
     Package::factory()->create();
     Package::factory()->create();
@@ -24,9 +24,9 @@ it('does not scope queries when tenancy is disabled', function () {
 
 it('auto-assigns tenant foreign key on creation when tenancy is enabled', function () {
     config([
-        'laravel-satis.tenancy.enabled' => true,
-        'laravel-satis.tenancy.foreign_key' => 'team_id',
-        'laravel-satis.tenancy.resolver' => fn () => 42,
+        'satis.tenancy.enabled' => true,
+        'satis.tenancy.foreign_key' => 'team_id',
+        'satis.tenancy.resolver' => fn () => 42,
     ]);
 
     Package::clearBootedModels();
@@ -40,9 +40,9 @@ it('auto-assigns tenant foreign key on creation when tenancy is enabled', functi
 
 it('scopes queries by tenant when tenancy is enabled', function () {
     config([
-        'laravel-satis.tenancy.enabled' => true,
-        'laravel-satis.tenancy.foreign_key' => 'team_id',
-        'laravel-satis.tenancy.resolver' => fn () => 1,
+        'satis.tenancy.enabled' => true,
+        'satis.tenancy.foreign_key' => 'team_id',
+        'satis.tenancy.resolver' => fn () => 1,
     ]);
 
     Package::clearBootedModels();

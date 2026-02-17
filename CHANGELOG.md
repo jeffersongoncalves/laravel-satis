@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.5 - 2026-02-17
+
+### Changed
+
+- Renamed config file from `config/laravel-satis.php` to `config/satis.php`
+- Updated all config references from `config('laravel-satis.*')` to `config('satis.*')`
+
 ## 1.3.4 - 2026-02-17
 
 ### Fixed
@@ -37,5 +44,4 @@ All notable changes to this project will be documented in this file.
   - Prompts for repository name
   - Supports `--name` and `--force` options
   - Confirms before overwriting an existing `satis.json`
-  
 - PHPStan/Larastan static analysis configuration (`phpstan.neon.dist` + baseline)

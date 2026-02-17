@@ -24,7 +24,7 @@ class SyncTenantPackages implements ShouldQueue
     public function __construct(
         protected ?int $tenantId = null
     ) {
-        $queueConfig = config('laravel-satis.queue');
+        $queueConfig = config('satis.queue');
 
         if ($queueConfig['connection'] ?? null) {
             $this->onConnection($queueConfig['connection']);
@@ -42,8 +42,8 @@ class SyncTenantPackages implements ShouldQueue
 
         $query = $packageModel::query();
 
-        if ($this->tenantId && config('laravel-satis.tenancy.enabled')) {
-            $fk = config('laravel-satis.tenancy.foreign_key');
+        if ($this->tenantId && config('satis.tenancy.enabled')) {
+            $fk = config('satis.tenancy.foreign_key');
             $query->withoutGlobalScope('satis-tenant')->where($fk, $this->tenantId);
         }
 
@@ -53,19 +53,19 @@ class SyncTenantPackages implements ShouldQueue
             return;
         }
 
-        $disk = Storage::disk(config('laravel-satis.storage_disk'));
-        $storagePath = config('laravel-satis.storage_path', 'satis');
+        $disk = Storage::disk(config('satis.storage_disk'));
+        $storagePath = config('satis.storage_path', 'satis');
         $tenantPrefix = $this->tenantId ? $this->tenantId.'/' : '';
         $buildPath = $storagePath.'/'.$tenantPrefix.'tenant';
 
         $satisConfig = SatisConfig::make()
             ->setPackages($packages)
-            ->setHomepage(url(config('laravel-satis.routes.composer_prefix', 'satis')));
+            ->setHomepage(url(config('satis.routes.composer_prefix', 'satis')));
 
         $configPath = $buildPath.'/satis.json';
         $disk->put($configPath, $satisConfig->toJson());
 
-        $satisBinary = config('laravel-satis.satis_binary') ?? base_path('vendor/bin/satis');
+        $satisBinary = config('satis.satis_binary') ?? base_path('vendor/bin/satis');
         $fullConfigPath = $disk->path($configPath);
         $fullBuildPath = $disk->path($buildPath);
 
@@ -84,8 +84,8 @@ class SyncTenantPackages implements ShouldQueue
 
         $tokensQuery = $tokenModel::query();
 
-        if ($this->tenantId && config('laravel-satis.tenancy.enabled')) {
-            $fk = config('laravel-satis.tenancy.foreign_key');
+        if ($this->tenantId && config('satis.tenancy.enabled')) {
+            $fk = config('satis.tenancy.foreign_key');
             $tokensQuery->withoutGlobalScope('satis-tenant')->where($fk, $this->tenantId);
         }
 

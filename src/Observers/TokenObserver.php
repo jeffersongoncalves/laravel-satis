@@ -27,12 +27,12 @@ class TokenObserver
     {
         $this->clearCache();
 
-        $disk = Storage::disk(config('laravel-satis.storage_disk'));
-        $storagePath = config('laravel-satis.storage_path', 'satis');
+        $disk = Storage::disk(config('satis.storage_disk'));
+        $storagePath = config('satis.storage_path', 'satis');
 
         $tenantPrefix = '';
-        if (config('laravel-satis.tenancy.enabled')) {
-            $fk = config('laravel-satis.tenancy.foreign_key');
+        if (config('satis.tenancy.enabled')) {
+            $fk = config('satis.tenancy.foreign_key');
             $tenantId = $token->{$fk} ?? null;
             if ($tenantId) {
                 $tenantPrefix = $tenantId.'/';

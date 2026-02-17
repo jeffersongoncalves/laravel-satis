@@ -27,7 +27,7 @@ class SatisInstall extends Command
 
         $name = $this->option('name') ?? $this->ask(
             'What is the repository name?',
-            config('laravel-satis.satis.name', 'my/repository')
+            config('satis.satis.name', 'my/repository')
         );
 
         $stubPath = __DIR__.'/../../stubs/satis.json.stub';

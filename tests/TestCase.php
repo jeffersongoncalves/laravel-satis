@@ -26,9 +26,9 @@ abstract class TestCase extends Orchestra
             'prefix' => '',
         ]);
 
-        $configPath = __DIR__.'/../config/laravel-satis.php';
+        $configPath = __DIR__.'/../config/satis.php';
         if (file_exists($configPath)) {
-            $app['config']->set('laravel-satis', require $configPath);
+            $app['config']->set('satis', require $configPath);
         }
     }
 

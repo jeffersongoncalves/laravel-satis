@@ -15,8 +15,8 @@ class SatisValidate extends Command
     {
         $tenantId = $this->option('tenant');
 
-        if (config('laravel-satis.tenancy.enabled') && ! $tenantId) {
-            $tenantModel = config('laravel-satis.tenancy.model');
+        if (config('satis.tenancy.enabled') && ! $tenantId) {
+            $tenantModel = config('satis.tenancy.model');
             $tenants = $tenantModel::all();
 
             foreach ($tenants as $tenant) {

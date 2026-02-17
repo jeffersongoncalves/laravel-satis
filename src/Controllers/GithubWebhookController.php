@@ -23,8 +23,8 @@ class GithubWebhookController extends Controller
         }
 
         $tenantId = null;
-        if (config('laravel-satis.tenancy.enabled')) {
-            $fk = config('laravel-satis.tenancy.foreign_key');
+        if (config('satis.tenancy.enabled')) {
+            $fk = config('satis.tenancy.foreign_key');
             $tenantId = $package->{$fk} ?? null;
         }
 

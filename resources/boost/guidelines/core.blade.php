@@ -21,7 +21,7 @@ All models use `ModelResolver` for class resolution — always use `ModelResolve
 
 ### Configuration
 
-Config file: `config/laravel-satis.php`
+Config file: `config/satis.php`
 
 Key options:
 - `tenancy.enabled` — Enable multi-tenancy with custom resolver

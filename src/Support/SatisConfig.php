@@ -16,7 +16,7 @@ class SatisConfig
 
     public function __construct()
     {
-        $this->config = config('laravel-satis.satis', []);
+        $this->config = config('satis.satis', []);
         $this->packages = collect();
     }
 

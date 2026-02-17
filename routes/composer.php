@@ -7,10 +7,10 @@ use JeffersonGoncalves\LaravelSatis\Controllers\PackagesController;
 use JeffersonGoncalves\LaravelSatis\Controllers\PackagesV2Controller;
 use JeffersonGoncalves\LaravelSatis\Middleware\EnsureUserHasLicense;
 
-$prefix = config('laravel-satis.routes.composer_prefix', 'satis');
-$middleware = config('laravel-satis.routes.middleware', ['api']);
+$prefix = config('satis.routes.composer_prefix', 'satis');
+$middleware = config('satis.routes.middleware', ['api']);
 
-if (config('laravel-satis.tenancy.enabled')) {
+if (config('satis.tenancy.enabled')) {
     $prefix .= '/{tenant}';
 }
 

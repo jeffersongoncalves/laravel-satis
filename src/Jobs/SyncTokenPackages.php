@@ -24,7 +24,7 @@ class SyncTokenPackages implements ShouldQueue
     public function __construct(
         protected Token $token
     ) {
-        $queueConfig = config('laravel-satis.queue');
+        $queueConfig = config('satis.queue');
 
         if ($queueConfig['connection'] ?? null) {
             $this->onConnection($queueConfig['connection']);
@@ -43,12 +43,12 @@ class SyncTokenPackages implements ShouldQueue
             return;
         }
 
-        $disk = Storage::disk(config('laravel-satis.storage_disk'));
-        $storagePath = config('laravel-satis.storage_path', 'satis');
+        $disk = Storage::disk(config('satis.storage_disk'));
+        $storagePath = config('satis.storage_path', 'satis');
 
         $tenantPrefix = '';
-        if (config('laravel-satis.tenancy.enabled')) {
-            $fk = config('laravel-satis.tenancy.foreign_key');
+        if (config('satis.tenancy.enabled')) {
+            $fk = config('satis.tenancy.foreign_key');
             $tenantId = $this->token->{$fk} ?? null;
             if ($tenantId) {
                 $tenantPrefix = $tenantId.'/';
@@ -59,12 +59,12 @@ class SyncTokenPackages implements ShouldQueue
 
         $satisConfig = SatisConfig::make()
             ->setPackages($packages)
-            ->setHomepage(url(config('laravel-satis.routes.composer_prefix', 'satis')));
+            ->setHomepage(url(config('satis.routes.composer_prefix', 'satis')));
 
         $configPath = $buildPath.'/satis.json';
         $disk->put($configPath, $satisConfig->toJson());
 
-        $satisBinary = config('laravel-satis.satis_binary') ?? base_path('vendor/bin/satis');
+        $satisBinary = config('satis.satis_binary') ?? base_path('vendor/bin/satis');
         $fullConfigPath = $disk->path($configPath);
         $fullBuildPath = $disk->path($buildPath);
 

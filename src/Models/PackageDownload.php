@@ -20,7 +20,7 @@ class PackageDownload extends Model
 
     public function getTable(): string
     {
-        return config('laravel-satis.table_prefix', 'satis_').'package_downloads';
+        return config('satis.table_prefix', 'satis_').'package_downloads';
     }
 
     public function package(): BelongsTo

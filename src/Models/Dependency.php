@@ -22,14 +22,14 @@ class Dependency extends Model
 
     public function getTable(): string
     {
-        return config('laravel-satis.table_prefix', 'satis_').'dependencies';
+        return config('satis.table_prefix', 'satis_').'dependencies';
     }
 
     public function packageReleases(): BelongsToMany
     {
         return $this->belongsToMany(
             ModelResolver::packageRelease(),
-            config('laravel-satis.table_prefix', 'satis_').'dependency_package_release',
+            config('satis.table_prefix', 'satis_').'dependency_package_release',
             'dependency_id',
             'package_release_id'
         )->withPivot('version', 'package_id')->withTimestamps();

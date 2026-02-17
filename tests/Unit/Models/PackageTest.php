@@ -26,7 +26,7 @@ it('uses the correct table name with prefix', function () {
 });
 
 it('uses custom table prefix from config', function () {
-    config(['laravel-satis.table_prefix' => 'custom_']);
+    config(['satis.table_prefix' => 'custom_']);
 
     $package = new Package;
 

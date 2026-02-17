@@ -10,7 +10,7 @@ it('accepts valid github webhook', function () {
     $package = Package::factory()->create();
 
     $response = $this->postJson(
-        '/'.config('laravel-satis.routes.api_prefix').'/webhooks/github/'.$package->reference,
+        '/'.config('satis.routes.api_prefix').'/webhooks/github/'.$package->reference,
         ['ref' => 'refs/heads/main']
     );
 
@@ -28,7 +28,7 @@ it('validates webhook signature when secret is set', function () {
     $signature = 'sha256='.hash_hmac('sha256', $payload, $package->webhook_secret);
 
     $response = $this->call('POST',
-        '/'.config('laravel-satis.routes.api_prefix').'/webhooks/github/'.$package->reference,
+        '/'.config('satis.routes.api_prefix').'/webhooks/github/'.$package->reference,
         [],
         [],
         [],
@@ -49,7 +49,7 @@ it('rejects invalid webhook signature', function () {
     $payload = json_encode(['ref' => 'refs/heads/main']);
 
     $response = $this->call('POST',
-        '/'.config('laravel-satis.routes.api_prefix').'/webhooks/github/'.$package->reference,
+        '/'.config('satis.routes.api_prefix').'/webhooks/github/'.$package->reference,
         [],
         [],
         [],
@@ -67,7 +67,7 @@ it('returns 404 for non-existent package reference', function () {
     Bus::fake();
 
     $response = $this->postJson(
-        config('laravel-satis.routes.api_prefix').'/webhooks/github/non-existent-ref',
+        config('satis.routes.api_prefix').'/webhooks/github/non-existent-ref',
         ['ref' => 'refs/heads/main']
     );
 

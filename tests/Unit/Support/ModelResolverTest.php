@@ -33,7 +33,7 @@ it('resolves the packagist model', function () {
 });
 
 it('resolves custom models from config', function () {
-    config(['laravel-satis.models.package' => 'App\\Models\\CustomPackage']);
+    config(['satis.models.package' => 'App\\Models\\CustomPackage']);
 
     expect(ModelResolver::package())->toBe('App\\Models\\CustomPackage');
 });

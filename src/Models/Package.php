@@ -49,7 +49,7 @@ class Package extends Model
 
     public function getTable(): string
     {
-        return config('laravel-satis.table_prefix', 'satis_').'packages';
+        return config('satis.table_prefix', 'satis_').'packages';
     }
 
     public function tokens(): BelongsToMany
@@ -58,7 +58,7 @@ class Package extends Model
 
         return $this->belongsToMany(
             $tokenModel,
-            config('laravel-satis.table_prefix', 'satis_').'package_token',
+            config('satis.table_prefix', 'satis_').'package_token',
             'package_id',
             'token_id'
         )->withTimestamps();

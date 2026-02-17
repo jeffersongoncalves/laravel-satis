@@ -62,7 +62,7 @@ php artisan vendor:publish --tag="satis-config"
 
 ## Configuration
 
-The config file (`config/laravel-satis.php`) covers:
+The config file (`config/satis.php`) covers:
 
 ### Multi-Tenancy
 
@@ -80,10 +80,10 @@ The `resolver` accepts any callable that returns the current tenant ID. Example:
 
 ```php
 // In a service provider or middleware
-config(['laravel-satis.tenancy.enabled' => true]);
-config(['laravel-satis.tenancy.model' => \App\Models\Team::class]);
-config(['laravel-satis.tenancy.foreign_key' => 'team_id']);
-config(['laravel-satis.tenancy.resolver' => fn () => auth()->user()?->current_team_id]);
+config(['satis.tenancy.enabled' => true]);
+config(['satis.tenancy.model' => \App\Models\Team::class]);
+config(['satis.tenancy.foreign_key' => 'team_id']);
+config(['satis.tenancy.resolver' => fn () => auth()->user()?->current_team_id]);
 ```
 
 ### Table Prefix

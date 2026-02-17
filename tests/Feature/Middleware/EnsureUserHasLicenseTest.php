@@ -11,7 +11,7 @@ it('authenticates with basic auth password', function () {
     $response = $this->withHeaders([
         'PHP_AUTH_USER' => 'composer',
         'PHP_AUTH_PW' => $token->token,
-    ])->getJson('/'.config('laravel-satis.routes.composer_prefix').'/packages.json');
+    ])->getJson('/'.config('satis.routes.composer_prefix').'/packages.json');
 
     $response->assertOk();
 });
@@ -23,13 +23,13 @@ it('authenticates with bearer token', function () {
 
     $response = $this->withHeaders([
         'Authorization' => 'Bearer '.$token->token,
-    ])->getJson('/'.config('laravel-satis.routes.composer_prefix').'/packages.json');
+    ])->getJson('/'.config('satis.routes.composer_prefix').'/packages.json');
 
     $response->assertOk();
 });
 
 it('rejects request without credentials', function () {
-    $response = $this->getJson('/'.config('laravel-satis.routes.composer_prefix').'/packages.json');
+    $response = $this->getJson('/'.config('satis.routes.composer_prefix').'/packages.json');
 
     $response->assertUnauthorized()
         ->assertJson([
@@ -42,7 +42,7 @@ it('rejects request with invalid token', function () {
     $response = $this->withHeaders([
         'PHP_AUTH_USER' => 'composer',
         'PHP_AUTH_PW' => 'invalid-token-string',
-    ])->getJson('/'.config('laravel-satis.routes.composer_prefix').'/packages.json');
+    ])->getJson('/'.config('satis.routes.composer_prefix').'/packages.json');
 
     $response->assertUnauthorized();
 });

@@ -54,33 +54,33 @@ class LaravelSatisServiceProvider extends PackageServiceProvider
 
     protected function registerAuthProvider(): void
     {
-        if (! config('laravel-satis.auth')) {
+        if (! config('satis.auth')) {
             return;
         }
 
         Auth::provider(
-            config('laravel-satis.auth.provider'),
+            config('satis.auth.provider'),
             fn ($app, $config) => new EloquentTokenProvider(
                 $app['hash'],
-                config('laravel-satis.models.token')
+                config('satis.models.token')
             )
         );
 
         config([
-            'auth.guards.'.config('laravel-satis.auth.guard') => [
+            'auth.guards.'.config('satis.auth.guard') => [
                 'driver' => 'session',
-                'provider' => config('laravel-satis.auth.provider'),
+                'provider' => config('satis.auth.provider'),
             ],
-            'auth.providers.'.config('laravel-satis.auth.provider') => [
-                'driver' => config('laravel-satis.auth.provider'),
-                'model' => config('laravel-satis.models.token'),
+            'auth.providers.'.config('satis.auth.provider') => [
+                'driver' => config('satis.auth.provider'),
+                'model' => config('satis.models.token'),
             ],
         ]);
     }
 
     protected function registerObservers(): void
     {
-        $models = config('laravel-satis.models');
+        $models = config('satis.models');
 
         if (! $models) {
             return;
@@ -95,7 +95,7 @@ class LaravelSatisServiceProvider extends PackageServiceProvider
 
     protected function registerSchedule(): void
     {
-        $schedule = config('laravel-satis.schedule');
+        $schedule = config('satis.schedule');
 
         if (! $schedule) {
             return;

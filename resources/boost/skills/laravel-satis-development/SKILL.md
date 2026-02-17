@@ -178,7 +178,7 @@ composer config http-basic.example.com "" "TOKEN_VALUE_HERE"
 Enable in config:
 
 ```php
-// config/laravel-satis.php
+// config/satis.php
 'tenancy' => [
     'enabled' => true,
     'model' => \App\Models\Tenant::class,
@@ -222,7 +222,7 @@ The webhook validates HMAC-SHA256 signature using `webhook_secret` and dispatche
 Override models in config:
 
 ```php
-// config/laravel-satis.php
+// config/satis.php
 'models' => [
     'package' => \App\Models\CustomPackage::class,
     // ...

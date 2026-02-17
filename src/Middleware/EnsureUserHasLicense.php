@@ -55,7 +55,7 @@ class EnsureUserHasLicense
 
     protected function validateTenantAccess(Request $request, $token): bool
     {
-        if (! config('laravel-satis.tenancy.enabled')) {
+        if (! config('satis.tenancy.enabled')) {
             return true;
         }
 
@@ -65,7 +65,7 @@ class EnsureUserHasLicense
             return true;
         }
 
-        $fk = config('laravel-satis.tenancy.foreign_key');
+        $fk = config('satis.tenancy.foreign_key');
 
         return $token->{$fk} == $tenantId;
     }

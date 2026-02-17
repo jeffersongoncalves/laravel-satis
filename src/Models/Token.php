@@ -34,7 +34,7 @@ class Token extends Model implements Authenticatable
 
     public function getTable(): string
     {
-        return config('laravel-satis.table_prefix', 'satis_').'tokens';
+        return config('satis.table_prefix', 'satis_').'tokens';
     }
 
     public function packages(): BelongsToMany
@@ -43,7 +43,7 @@ class Token extends Model implements Authenticatable
 
         return $this->belongsToMany(
             $packageModel,
-            config('laravel-satis.table_prefix', 'satis_').'package_token',
+            config('satis.table_prefix', 'satis_').'package_token',
             'token_id',
             'package_id'
         )->withTimestamps();

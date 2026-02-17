@@ -19,7 +19,7 @@ class DownloadComposerJob implements ShouldQueue
         protected int $packageId,
         protected string $version
     ) {
-        $queueConfig = config('laravel-satis.queue');
+        $queueConfig = config('satis.queue');
 
         if ($queueConfig['connection'] ?? null) {
             $this->onConnection($queueConfig['connection']);

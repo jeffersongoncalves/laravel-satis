@@ -21,7 +21,7 @@ class ValidateTenantSatisBuild implements ShouldQueue
     public function __construct(
         protected ?int $tenantId = null
     ) {
-        $queueConfig = config('laravel-satis.queue');
+        $queueConfig = config('satis.queue');
 
         if ($queueConfig['connection'] ?? null) {
             $this->onConnection($queueConfig['connection']);
@@ -37,8 +37,8 @@ class ValidateTenantSatisBuild implements ShouldQueue
         $packageModel = ModelResolver::package();
         $query = $packageModel::query();
 
-        if ($this->tenantId && config('laravel-satis.tenancy.enabled')) {
-            $fk = config('laravel-satis.tenancy.foreign_key');
+        if ($this->tenantId && config('satis.tenancy.enabled')) {
+            $fk = config('satis.tenancy.foreign_key');
             $query->withoutGlobalScope('satis-tenant')->where($fk, $this->tenantId);
         }
 
@@ -51,8 +51,8 @@ class ValidateTenantSatisBuild implements ShouldQueue
         $tokenModel = ModelResolver::token();
         $tokensQuery = $tokenModel::query();
 
-        if ($this->tenantId && config('laravel-satis.tenancy.enabled')) {
-            $fk = config('laravel-satis.tenancy.foreign_key');
+        if ($this->tenantId && config('satis.tenancy.enabled')) {
+            $fk = config('satis.tenancy.foreign_key');
             $tokensQuery->withoutGlobalScope('satis-tenant')->where($fk, $this->tenantId);
         }
 

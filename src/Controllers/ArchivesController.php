@@ -25,8 +25,8 @@ class ArchivesController extends Controller
             return response()->json(['error' => 'Forbidden'], 403);
         }
 
-        $disk = Storage::disk(config('laravel-satis.storage_disk'));
-        $storagePath = config('laravel-satis.storage_path', 'satis');
+        $disk = Storage::disk(config('satis.storage_disk'));
+        $storagePath = config('satis.storage_path', 'satis');
 
         $tenantPrefix = $this->getTenantPrefix($request, $token);
         $buildPath = $storagePath.'/'.$tenantPrefix.$token->id;
@@ -41,7 +41,7 @@ class ArchivesController extends Controller
 
     protected function getTenantPrefix(Request $request, $token): string
     {
-        if (! config('laravel-satis.tenancy.enabled')) {
+        if (! config('satis.tenancy.enabled')) {
             return '';
         }
 
@@ -51,7 +51,7 @@ class ArchivesController extends Controller
             return $tenantId.'/';
         }
 
-        $fk = config('laravel-satis.tenancy.foreign_key');
+        $fk = config('satis.tenancy.foreign_key');
         $tenantId = $token->{$fk} ?? null;
 
         return $tenantId ? $tenantId.'/' : '';

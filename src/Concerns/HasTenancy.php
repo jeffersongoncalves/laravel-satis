@@ -10,14 +10,14 @@ trait HasTenancy
 {
     public static function bootHasTenancy(): void
     {
-        if (! config('laravel-satis.tenancy.enabled')) {
+        if (! config('satis.tenancy.enabled')) {
             return;
         }
 
-        $foreignKey = config('laravel-satis.tenancy.foreign_key');
+        $foreignKey = config('satis.tenancy.foreign_key');
 
         static::addGlobalScope('satis-tenant', function (Builder $query) use ($foreignKey) {
-            $resolver = config('laravel-satis.tenancy.resolver');
+            $resolver = config('satis.tenancy.resolver');
 
             if ($resolver && ($tenantId = call_user_func($resolver))) {
                 $query->where($foreignKey, $tenantId);
@@ -25,7 +25,7 @@ trait HasTenancy
         });
 
         static::creating(function (Model $model) use ($foreignKey) {
-            $resolver = config('laravel-satis.tenancy.resolver');
+            $resolver = config('satis.tenancy.resolver');
 
             if ($resolver && ($tenantId = call_user_func($resolver))) {
                 $model->{$foreignKey} = $tenantId;
@@ -35,8 +35,8 @@ trait HasTenancy
 
     public function tenant(): BelongsTo
     {
-        $model = config('laravel-satis.tenancy.model');
-        $foreignKey = config('laravel-satis.tenancy.foreign_key');
+        $model = config('satis.tenancy.model');
+        $foreignKey = config('satis.tenancy.foreign_key');
 
         return $this->belongsTo($model, $foreignKey);
     }

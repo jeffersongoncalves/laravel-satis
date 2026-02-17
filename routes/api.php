@@ -5,10 +5,10 @@ use JeffersonGoncalves\LaravelSatis\Controllers\DownloadComposerController;
 use JeffersonGoncalves\LaravelSatis\Controllers\GithubWebhookController;
 use JeffersonGoncalves\LaravelSatis\Middleware\EnsureUserHasLicense;
 
-$prefix = config('laravel-satis.routes.api_prefix', 'api/satis');
-$middleware = config('laravel-satis.routes.middleware', ['api']);
+$prefix = config('satis.routes.api_prefix', 'api/satis');
+$middleware = config('satis.routes.middleware', ['api']);
 
-$composerPrefix = config('laravel-satis.tenancy.enabled')
+$composerPrefix = config('satis.tenancy.enabled')
     ? '{tenant}/composer/downloads'
     : 'composer/downloads';
 
