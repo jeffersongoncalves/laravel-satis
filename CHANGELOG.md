@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.5.0 - 2026-02-17
+
+### Added
+
+- `AddDependencyDefaultByPackage` job — auto-creates a Package for private dependencies, copying type/url/credentials from the parent package
+- `ProcessPackageDependency` action now dispatches `AddDependencyDefaultByPackage` when a dependency is detected as private
+
+### Changed
+
+- `ProcessPackageDependency` action: removed `resolveType()` method (type detection now delegated to `DependencyObserver` via `Packagist::getDependencyType()`)
+- `ProcessPackageDependency` action: `firstOrCreate` now passes initial `versions` array, uses `collect()` for unique version management, and handles array version values with `implode(',')`
+- `ProcessPackageDependency` action: `execute()` now accepts optional `$package` parameter for dispatching dependency jobs
+
 ## 1.4.4 - 2026-02-17
 
 ### Added

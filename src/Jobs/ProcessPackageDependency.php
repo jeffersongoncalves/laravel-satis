@@ -93,7 +93,7 @@ class ProcessPackageDependency implements ShouldQueue
             );
 
             $requires = $versionData['require'] ?? [];
-            $action->execute($release, $requires);
+            $action->execute($release, $requires, $package);
         }
     }
 }

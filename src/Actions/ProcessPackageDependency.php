@@ -2,30 +2,37 @@
 
 namespace JeffersonGoncalves\LaravelSatis\Actions;
 
+use Illuminate\Database\Eloquent\Model;
 use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
+use JeffersonGoncalves\LaravelSatis\Jobs\AddDependencyDefaultByPackage;
 use JeffersonGoncalves\LaravelSatis\Models\PackageRelease;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 class ProcessPackageDependency
 {
-    public function execute(PackageRelease $release, array $requires): void
+    public function execute(PackageRelease $release, array $requires, ?Model $package = null): void
     {
         $dependencyModel = ModelResolver::dependency();
 
-        foreach ($requires as $name => $version) {
-            if ($this->shouldSkip($name)) {
+        foreach ($requires as $require => $version) {
+            if ($this->shouldSkip($require)) {
                 continue;
             }
 
-            $dependency = $dependencyModel::firstOrCreate(
-                ['name' => $name],
-                ['type' => $this->resolveType($name)]
-            );
+            $version = is_array($version) ? implode(',', $version) : $version;
 
-            $versions = $dependency->versions ?? [];
-            if (! in_array($version, $versions)) {
-                $versions[] = $version;
-                $dependency->update(['versions' => $versions]);
+            $dependency = $dependencyModel::firstOrCreate([
+                'name' => $require,
+            ], [
+                'versions' => [$version],
+            ]);
+
+            $versions = collect($dependency->versions ?? []);
+            if (! $versions->contains($version)) {
+                $versions->push($version);
+                $dependency->update([
+                    'versions' => $versions->unique()->values()->all(),
+                ]);
             }
 
             $release->dependencies()->syncWithoutDetaching([
@@ -34,6 +41,10 @@ class ProcessPackageDependency
                     'package_id' => $release->package_id,
                 ],
             ]);
+
+            if ($package && $dependency->type->value === DependencyType::Private->value) {
+                AddDependencyDefaultByPackage::dispatch($package, $require);
+            }
         }
     }
 
@@ -48,14 +59,5 @@ class ProcessPackageDependency
         }
 
         return false;
-    }
-
-    protected function resolveType(string $name): DependencyType
-    {
-        $packagistModel = ModelResolver::packagist();
-
-        $exists = $packagistModel::where('name', $name)->exists();
-
-        return $exists ? DependencyType::Public : DependencyType::Private;
     }
 }
