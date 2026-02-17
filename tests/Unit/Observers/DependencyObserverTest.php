@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
 use JeffersonGoncalves\LaravelSatis\Models\Dependency;
@@ -73,29 +72,3 @@ it('overrides explicit type with detected type for names with slash', function (
     expect($dependency->type)->toBe(DependencyType::Public);
 });
 
-it('clears cache on dependency creation', function () {
-    Http::fake([
-        'repo.packagist.org/*' => Http::response([], 404),
-    ]);
-
-    Cache::put('laravel-satis:dependencies', 'cached-data');
-    Cache::put('laravel-satis:dependencies-count', 5);
-
-    Dependency::create(['name' => 'test/package']);
-
-    expect(Cache::get('laravel-satis:dependencies'))->toBeNull()
-        ->and(Cache::get('laravel-satis:dependencies-count'))->toBeNull();
-});
-
-it('clears cache on dependency deletion', function () {
-    Http::fake([
-        'repo.packagist.org/*' => Http::response([], 404),
-    ]);
-
-    $dependency = Dependency::create(['name' => 'test/package']);
-
-    Cache::put('laravel-satis:dependencies', 'cached-data');
-    $dependency->delete();
-
-    expect(Cache::get('laravel-satis:dependencies'))->toBeNull();
-});

@@ -11,9 +11,7 @@ use JeffersonGoncalves\LaravelSatis\Commands\SatisSanitize;
 use JeffersonGoncalves\LaravelSatis\Commands\SatisTokenBuild;
 use JeffersonGoncalves\LaravelSatis\Commands\SatisValidate;
 use JeffersonGoncalves\LaravelSatis\Observers\DependencyObserver;
-use JeffersonGoncalves\LaravelSatis\Observers\PackageDownloadObserver;
 use JeffersonGoncalves\LaravelSatis\Observers\PackageObserver;
-use JeffersonGoncalves\LaravelSatis\Observers\PackageReleaseObserver;
 use JeffersonGoncalves\LaravelSatis\Observers\TokenObserver;
 use JeffersonGoncalves\LaravelSatis\Providers\EloquentTokenProvider;
 use Spatie\LaravelPackageTools\Package;
@@ -92,8 +90,6 @@ class LaravelSatisServiceProvider extends PackageServiceProvider
         $models['package']::observe(PackageObserver::class);
         $models['token']::observe(TokenObserver::class);
         $models['dependency']::observe(DependencyObserver::class);
-        $models['package_download']::observe(PackageDownloadObserver::class);
-        $models['package_release']::observe(PackageReleaseObserver::class);
     }
 
     protected function registerSchedule(): void

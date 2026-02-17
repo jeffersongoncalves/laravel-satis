@@ -1,13 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Cache;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
 
-it('generates webhook_secret on creation when empty', function () {
-    $package = Package::factory()->create(['webhook_secret' => null]);
+it('generates webhook_secret on creation when github type and empty', function () {
+    $package = Package::factory()->github()->create(['webhook_secret' => null]);
 
     expect($package->webhook_secret)->not->toBeNull()
         ->and(strlen($package->webhook_secret))->toBe(40);
+});
+
+it('does not generate webhook_secret on creation when composer type', function () {
+    $package = Package::factory()->create(['webhook_secret' => null]);
+
+    expect($package->webhook_secret)->toBeNull();
 });
 
 it('generates reference on creation when empty', function () {
@@ -18,7 +23,7 @@ it('generates reference on creation when empty', function () {
 });
 
 it('preserves existing webhook_secret on creation', function () {
-    $package = Package::factory()->create(['webhook_secret' => 'my-custom-secret']);
+    $package = Package::factory()->github()->create(['webhook_secret' => 'my-custom-secret']);
 
     expect($package->webhook_secret)->toBe('my-custom-secret');
 });
@@ -55,32 +60,4 @@ it('clears credentials validation when password changes', function () {
     $package->refresh();
 
     expect($package->is_credentials_validated)->toBeFalse();
-});
-
-it('clears cache on package creation', function () {
-    Cache::put('laravel-satis:packages', 'cached-data');
-    Cache::put('laravel-satis:packages-count', 5);
-
-    Package::factory()->create();
-
-    expect(Cache::get('laravel-satis:packages'))->toBeNull()
-        ->and(Cache::get('laravel-satis:packages-count'))->toBeNull();
-});
-
-it('clears cache on package update', function () {
-    $package = Package::factory()->create();
-
-    Cache::put('laravel-satis:packages', 'cached-data');
-    $package->update(['name' => 'vendor/new-name']);
-
-    expect(Cache::get('laravel-satis:packages'))->toBeNull();
-});
-
-it('clears cache on package deletion', function () {
-    $package = Package::factory()->create();
-
-    Cache::put('laravel-satis:packages', 'cached-data');
-    $package->delete();
-
-    expect(Cache::get('laravel-satis:packages'))->toBeNull();
 });

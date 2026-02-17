@@ -2,7 +2,6 @@
 
 namespace JeffersonGoncalves\LaravelSatis\Observers;
 
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use JeffersonGoncalves\LaravelSatis\Jobs\SyncTokenPackages;
 use JeffersonGoncalves\LaravelSatis\Models\Token;
@@ -18,15 +17,11 @@ class TokenObserver
 
     public function created(Token $token): void
     {
-        $this->clearCache();
-
         SyncTokenPackages::dispatch($token);
     }
 
     public function deleted(Token $token): void
     {
-        $this->clearCache();
-
         $disk = Storage::disk(config('satis.storage_disk'));
         $storagePath = config('satis.storage_path', 'satis');
 
@@ -44,11 +39,5 @@ class TokenObserver
         if ($disk->exists($tokenPath)) {
             $disk->deleteDirectory($tokenPath);
         }
-    }
-
-    protected function clearCache(): void
-    {
-        Cache::forget('laravel-satis:tokens');
-        Cache::forget('laravel-satis:tokens-count');
     }
 }

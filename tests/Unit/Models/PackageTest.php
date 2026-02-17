@@ -58,9 +58,7 @@ it('hides sensitive fields in array representation', function () {
 
     $array = $package->toArray();
 
-    expect($array)->not->toHaveKey('password')
-        ->not->toHaveKey('username')
-        ->not->toHaveKey('webhook_secret');
+    expect($array)->not->toHaveKey('password');
 });
 
 it('has a tokens relationship', function () {
@@ -100,8 +98,8 @@ it('has a packageDownloads relationship', function () {
     expect($package->packageDownloads)->toHaveCount(1);
 });
 
-it('auto-generates webhook_secret on creation', function () {
-    $package = Package::factory()->create(['webhook_secret' => null]);
+it('auto-generates webhook_secret on creation for github type', function () {
+    $package = Package::factory()->github()->create(['webhook_secret' => null]);
 
     expect($package->webhook_secret)->not->toBeNull()
         ->and(strlen($package->webhook_secret))->toBe(40);

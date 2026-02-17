@@ -70,8 +70,6 @@ class Package extends Model
 
     protected $hidden = [
         'password',
-        'username',
-        'webhook_secret',
     ];
 
     public static function getColumnCode(): array

@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Cache;
 use JeffersonGoncalves\LaravelSatis\Jobs\SyncTokenPackages;
 use JeffersonGoncalves\LaravelSatis\Models\Token;
 
@@ -24,27 +23,4 @@ it('dispatches SyncTokenPackages on creation', function () {
     Token::factory()->create();
 
     Bus::assertDispatched(SyncTokenPackages::class);
-});
-
-it('clears cache on token creation', function () {
-    Bus::fake();
-
-    Cache::put('laravel-satis:tokens', 'cached-data');
-    Cache::put('laravel-satis:tokens-count', 5);
-
-    Token::factory()->create();
-
-    expect(Cache::get('laravel-satis:tokens'))->toBeNull()
-        ->and(Cache::get('laravel-satis:tokens-count'))->toBeNull();
-});
-
-it('clears cache on token deletion', function () {
-    Bus::fake();
-
-    $token = Token::factory()->create();
-
-    Cache::put('laravel-satis:tokens', 'cached-data');
-    $token->delete();
-
-    expect(Cache::get('laravel-satis:tokens'))->toBeNull();
 });
