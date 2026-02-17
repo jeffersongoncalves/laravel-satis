@@ -7,11 +7,15 @@ A Laravel package for managing private Composer repositories powered by [Satis](
 - **Package Management** — Add and manage Composer & GitHub package sources
 - **Token-Based Auth** — Secure access with per-token package scoping
 - **Automated Builds** — Queue-driven Satis builds with configurable scheduling
-- **GitHub Webhooks** — Auto-rebuild on push events
+- **GitHub Webhooks** — Auto-rebuild on push, release and create events with signature verification
 - **Download Tracking** — Per-version download statistics
-- **Dependency Tracking** — Public/private dependency classification
+- **Dependency Tracking** — Public/private dependency classification with automatic processing
 - **Multi-Tenancy** — Tenant-isolated data with configurable resolver
 - **Credential Validation** — Verify package accessibility before building
+- **Intelligent Validation** — Timestamp-based comparison to skip unnecessary rebuilds
+- **Auth.json Support** — Automatic auth.json generation for authenticated Composer builds
+- **Credential Sanitization** — Remove transport-options from Satis JSON files to prevent credential leaks
+- **Dev Packages** — Mark packages as development-only with `is_dev` flag
 - **Composer V2 Protocol** — Full support for `packages.json`, `p2/` and include files
 
 ## Requirements
@@ -71,6 +75,8 @@ config(['satis.tenancy.resolver' => fn () => auth()->user()?->current_team_id]);
 'table_prefix' => 'satis_',
 ```
 
+Set to `null` to use table names without a prefix.
+
 ### Custom Models
 
 Override any model to extend the default behavior:
@@ -94,8 +100,9 @@ Override any model to extend the default behavior:
 
 ```php
 'queue' => [
-    'connection' => null, // null = default connection
-    'queue_name' => null, // null = default queue
+    'connection' => null,  // null = default connection
+    'queue_name' => null,  // null = default queue
+    'timeout' => 86400,    // 24 hours (in seconds)
 ],
 ```
 
@@ -103,8 +110,10 @@ Override any model to extend the default behavior:
 
 ```php
 'schedule' => [
-    'build' => 'weekly',       // any Laravel Schedule method or null
+    'build' => 'weekly',        // any Laravel Schedule method or null
+    'token_build' => 'weekly',
     'validate' => 'hourly',
+    'sanitize' => 'daily',
     'dependencies' => 'weekly',
 ],
 ```
@@ -136,6 +145,23 @@ $package = $packageModel::create([
     'password' => 'secret',
 ]);
 
+// Create a GitHub package
+$githubPackage = $packageModel::create([
+    'name' => 'vendor/github-package',
+    'type' => 'github',
+    'url' => 'https://github.com/vendor/repo.git',
+    'username' => 'github-user',
+    'password' => 'github-token',
+]);
+
+// Create a dev package
+$devPackage = $packageModel::create([
+    'name' => 'vendor/dev-tool',
+    'type' => 'composer',
+    'url' => 'https://repo.example.com',
+    'is_dev' => true,
+]);
+
 // Create a token
 $tokenModel = ModelResolver::token();
 $token = $tokenModel::create([
@@ -150,17 +176,32 @@ $token->packages()->attach($package->id);
 ### Running Builds
 
 ```bash
-# Build all packages
+# Build all packages (tenant-based)
 php artisan satis:build
 
 # Build for a specific tenant
 php artisan satis:build --tenant=1
 
-# Validate credentials
+# Build per token (all tokens with packages)
+php artisan satis:token-build
+
+# Build for a specific token
+php artisan satis:token-build --token=5
+
+# Validate credentials and trigger rebuilds if needed
 php artisan satis:validate
 
 # Process dependencies
 php artisan dependency:packages
+
+# Remove credentials from Satis JSON files
+php artisan satis:sanitize
+
+# Clean all Satis builds from storage
+php artisan satis:clean
+
+# Force clean without confirmation
+php artisan satis:clean --force
 ```
 
 ### Composer Client Configuration
@@ -194,6 +235,15 @@ POST /api/satis/webhooks/github/{package-reference}
 
 Set the **Content type** to `application/json` and optionally configure a **Secret** using the package's `webhook_secret`.
 
+**Supported events:** `push`, `release`, `create` — all other events are ignored with HTTP 200.
+
+The webhook handler:
+1. Validates the package is a GitHub type (returns 400 otherwise)
+2. Filters supported events
+3. Verifies HMAC-SHA256 signature when a secret is configured
+4. Dispatches `SyncTenantPackages` for the tenant rebuild
+5. Dispatches `SyncTokenPackages` for each token associated with the package
+
 ## API Endpoints
 
 ### Composer Protocol (requires token auth)
@@ -216,8 +266,11 @@ Set the **Content type** to `application/json` and optionally configure a **Secr
 
 | Command | Description |
 |---------|-------------|
-| `satis:build` | Build Satis repository from packages |
-| `satis:validate` | Validate package credentials and builds |
+| `satis:build` | Build Satis repository (tenant-based) |
+| `satis:token-build` | Build Satis repository (token-based) |
+| `satis:validate` | Validate package credentials and trigger rebuilds if needed |
+| `satis:clean` | Clean all Satis builds from storage |
+| `satis:sanitize` | Remove credentials from Satis JSON files |
 | `dependency:packages` | Process and sync package dependencies |
 
 ## License
