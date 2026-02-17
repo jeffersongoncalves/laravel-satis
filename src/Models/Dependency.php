@@ -4,6 +4,7 @@ namespace JeffersonGoncalves\LaravelSatis\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
@@ -14,6 +15,7 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property DependencyType|null $type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, DependencyPackageRelease> $packageReleaseRequires
  * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageRelease> $packageReleases
  */
 class Dependency extends Model
@@ -32,6 +34,11 @@ class Dependency extends Model
     public function getTable(): string
     {
         return (config('satis.table_prefix') ?? '').'dependencies';
+    }
+
+    public function packageReleaseRequires(): HasMany
+    {
+        return $this->hasMany(ModelResolver::dependencyPackageRelease());
     }
 
     public function packageReleases(): BelongsToMany

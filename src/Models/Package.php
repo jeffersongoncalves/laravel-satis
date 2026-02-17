@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use JeffersonGoncalves\LaravelSatis\Concerns\GenerateCode;
 use JeffersonGoncalves\LaravelSatis\Concerns\HasTenancy;
 use JeffersonGoncalves\LaravelSatis\Database\Factories\PackageFactory;
@@ -32,8 +33,9 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property-read string $composer_command
  * @property-read string $webhook_url
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Token> $tokens
- * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageRelease> $releases
- * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageDownload> $downloads
+ * @property-read PackageRelease|null $packageRelease
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageRelease> $packageReleases
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageDownload> $packageDownloads
  */
 class Package extends Model
 {
@@ -102,12 +104,17 @@ class Package extends Model
         )->withTimestamps();
     }
 
-    public function releases(): HasMany
+    public function packageRelease(): HasOne
+    {
+        return $this->hasOne(ModelResolver::packageRelease())->latest('version');
+    }
+
+    public function packageReleases(): HasMany
     {
         return $this->hasMany(ModelResolver::packageRelease());
     }
 
-    public function downloads(): HasMany
+    public function packageDownloads(): HasMany
     {
         return $this->hasMany(ModelResolver::packageDownload());
     }

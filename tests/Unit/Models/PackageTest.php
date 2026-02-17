@@ -73,14 +73,23 @@ it('has a tokens relationship', function () {
         ->and($package->tokens->first()->id)->toBe($token->id);
 });
 
-it('has a releases relationship', function () {
+it('has a packageReleases relationship', function () {
     $package = Package::factory()->create();
     PackageRelease::factory()->create(['package_id' => $package->id]);
 
-    expect($package->releases)->toHaveCount(1);
+    expect($package->packageReleases)->toHaveCount(1);
 });
 
-it('has a downloads relationship', function () {
+it('has a packageRelease relationship', function () {
+    $package = Package::factory()->create();
+    PackageRelease::factory()->create(['package_id' => $package->id, 'version' => '1.0.0']);
+    PackageRelease::factory()->create(['package_id' => $package->id, 'version' => '2.0.0']);
+
+    expect($package->packageRelease)->toBeInstanceOf(PackageRelease::class)
+        ->and($package->packageRelease->version)->toBe('2.0.0');
+});
+
+it('has a packageDownloads relationship', function () {
     $package = Package::factory()->create();
     PackageDownload::create([
         'package_id' => $package->id,
@@ -88,7 +97,7 @@ it('has a downloads relationship', function () {
         'downloads' => 10,
     ]);
 
-    expect($package->downloads)->toHaveCount(1);
+    expect($package->packageDownloads)->toHaveCount(1);
 });
 
 it('auto-generates webhook_secret on creation', function () {

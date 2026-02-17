@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use JeffersonGoncalves\LaravelSatis\Database\Factories\PackageReleaseFactory;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
@@ -22,6 +23,7 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read string $name
  * @property-read Package $package
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, DependencyPackageRelease> $packageReleaseRequires
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Dependency> $dependencies
  */
 class PackageRelease extends Model
@@ -50,6 +52,11 @@ class PackageRelease extends Model
     public function package(): BelongsTo
     {
         return $this->belongsTo(ModelResolver::package());
+    }
+
+    public function packageReleaseRequires(): HasMany
+    {
+        return $this->hasMany(ModelResolver::dependencyPackageRelease());
     }
 
     protected function name(): Attribute

@@ -49,6 +49,7 @@ return [
         'dependency' => \JeffersonGoncalves\LaravelSatis\Models\Dependency::class,
         'package_release' => \JeffersonGoncalves\LaravelSatis\Models\PackageRelease::class,
         'package_download' => \JeffersonGoncalves\LaravelSatis\Models\PackageDownload::class,
+        'dependency_package_release' => \JeffersonGoncalves\LaravelSatis\Models\DependencyPackageRelease::class,
         'packagist' => \JeffersonGoncalves\LaravelSatis\Models\Packagist::class,
     ],
 

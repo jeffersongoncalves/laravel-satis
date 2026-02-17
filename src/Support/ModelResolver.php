@@ -29,6 +29,11 @@ class ModelResolver
         return config('satis.models.package_download');
     }
 
+    public static function dependencyPackageRelease(): string
+    {
+        return config('satis.models.dependency_package_release');
+    }
+
     public static function packagist(): string
     {
         return config('satis.models.packagist');
