@@ -19,7 +19,6 @@ afterEach(function () {
 it('publishes satis.json with interactive prompts', function () {
     $this->artisan('satis:install')
         ->expectsQuestion('What is the repository name?', 'my-company/packages')
-        ->expectsQuestion('What is the homepage URL for the Satis repository?', 'https://packages.example.com')
         ->expectsOutput('satis.json has been published to the project root.')
         ->assertExitCode(0);
 
@@ -29,13 +28,12 @@ it('publishes satis.json with interactive prompts', function () {
 
     expect($content)
         ->toHaveKey('name', 'my-company/packages')
-        ->toHaveKey('homepage', 'https://packages.example.com');
+        ->not->toHaveKey('homepage');
 });
 
 it('publishes satis.json with command options', function () {
     $this->artisan('satis:install', [
         '--name' => 'acme/repo',
-        '--homepage' => 'https://repo.acme.com',
     ])
         ->expectsOutput('satis.json has been published to the project root.')
         ->assertExitCode(0);
@@ -46,7 +44,7 @@ it('publishes satis.json with command options', function () {
 
     expect($content)
         ->toHaveKey('name', 'acme/repo')
-        ->toHaveKey('homepage', 'https://repo.acme.com');
+        ->not->toHaveKey('homepage');
 });
 
 it('asks for confirmation when satis.json already exists', function () {
@@ -66,15 +64,13 @@ it('overwrites existing satis.json when confirmed', function () {
     $this->artisan('satis:install')
         ->expectsConfirmation('A satis.json file already exists. Do you want to overwrite it?', 'yes')
         ->expectsQuestion('What is the repository name?', 'new/repo')
-        ->expectsQuestion('What is the homepage URL for the Satis repository?', 'https://new.example.com')
         ->expectsOutput('satis.json has been published to the project root.')
         ->assertExitCode(0);
 
     $content = json_decode(File::get($this->targetPath), true);
 
     expect($content)
-        ->toHaveKey('name', 'new/repo')
-        ->toHaveKey('homepage', 'https://new.example.com');
+        ->toHaveKey('name', 'new/repo');
 });
 
 it('overwrites existing satis.json with force option', function () {
@@ -82,7 +78,6 @@ it('overwrites existing satis.json with force option', function () {
 
     $this->artisan('satis:install', [
         '--name' => 'forced/repo',
-        '--homepage' => 'https://forced.example.com',
         '--force' => true,
     ])
         ->expectsOutput('satis.json has been published to the project root.')
@@ -91,21 +86,19 @@ it('overwrites existing satis.json with force option', function () {
     $content = json_decode(File::get($this->targetPath), true);
 
     expect($content)
-        ->toHaveKey('name', 'forced/repo')
-        ->toHaveKey('homepage', 'https://forced.example.com');
+        ->toHaveKey('name', 'forced/repo');
 });
 
 it('preserves default satis.json structure', function () {
     $this->artisan('satis:install', [
         '--name' => 'test/repo',
-        '--homepage' => 'https://test.example.com',
     ])->assertExitCode(0);
 
     $content = json_decode(File::get($this->targetPath), true);
 
     expect($content)
         ->toHaveKey('name', 'test/repo')
-        ->toHaveKey('homepage', 'https://test.example.com')
+        ->not->toHaveKey('homepage')
         ->toHaveKey('repositories')
         ->toHaveKey('require-all', false)
         ->toHaveKey('output-html', false)

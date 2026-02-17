@@ -1,6 +1,5 @@
 {
     "name": "{{ name }}",
-    "homepage": "{{ homepage }}",
     "repositories": [],
     "require-all": false,
     "output-html": false,

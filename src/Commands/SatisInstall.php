@@ -9,7 +9,6 @@ class SatisInstall extends Command
 {
     protected $signature = 'satis:install
         {--name= : The repository name (e.g. my-company/repository)}
-        {--homepage= : The homepage URL for the Satis repository}
         {--force : Overwrite existing satis.json file}';
 
     protected $description = 'Install and configure the Satis repository by publishing the satis.json to the project root';
@@ -31,11 +30,6 @@ class SatisInstall extends Command
             config('laravel-satis.satis.name', 'my/repository')
         );
 
-        $homepage = $this->option('homepage') ?? $this->ask(
-            'What is the homepage URL for the Satis repository?',
-            url(config('laravel-satis.routes.composer_prefix', 'satis'))
-        );
-
         $stubPath = __DIR__.'/../../stubs/satis.json.stub';
 
         if (! File::exists($stubPath)) {
@@ -46,14 +40,12 @@ class SatisInstall extends Command
 
         $content = File::get($stubPath);
         $content = str_replace('{{ name }}', $name, $content);
-        $content = str_replace('{{ homepage }}', $homepage, $content);
 
         File::put($targetPath, $content);
 
         $this->info('satis.json has been published to the project root.');
         $this->newLine();
         $this->components->twoColumnDetail('<fg=green>Name</>', $name);
-        $this->components->twoColumnDetail('<fg=green>Homepage</>', $homepage);
         $this->newLine();
         $this->info('You can now customize the satis.json file as needed.');
 

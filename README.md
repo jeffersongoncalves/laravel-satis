@@ -34,12 +34,11 @@ php artisan satis:install
 
 The command will ask you for:
 - **Repository name** — e.g. `my-company/packages`
-- **Homepage URL** — e.g. `https://packages.example.com`
 
-You can also pass them directly:
+You can also pass it directly:
 
 ```bash
-php artisan satis:install --name="my-company/packages" --homepage="https://packages.example.com"
+php artisan satis:install --name="my-company/packages"
 ```
 
 Use `--force` to overwrite an existing `satis.json`:
