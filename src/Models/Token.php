@@ -20,7 +20,6 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property string $token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
  * @property-read string $composer_command
  * @property-read string $composer_repository
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Package> $packages

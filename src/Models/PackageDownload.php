@@ -13,7 +13,6 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property int $downloads
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
  * @property-read Package $package
  */
 class PackageDownload extends Model

@@ -20,7 +20,6 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property string|null $homepage
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
  * @property-read string $name
  * @property-read Package $package
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Dependency> $dependencies

@@ -27,7 +27,6 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property \Illuminate\Support\Carbon|null $credentials_validated_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
  * @property-read string $folder
  * @property-read string $name_provider
  * @property-read string $composer_command

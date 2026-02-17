@@ -14,7 +14,6 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property DependencyType|null $type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageRelease> $packageReleases
  */
 class Dependency extends Model
