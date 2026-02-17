@@ -26,27 +26,6 @@ A Laravel package for managing private Composer repositories powered by [Satis](
 composer require jeffersongoncalves/laravel-satis
 ```
 
-Run the install command to publish the `satis.json` to your project root:
-
-```bash
-php artisan satis:install
-```
-
-The command will ask you for:
-- **Repository name** — e.g. `my-company/packages`
-
-You can also pass it directly:
-
-```bash
-php artisan satis:install --name="my-company/packages"
-```
-
-Use `--force` to overwrite an existing `satis.json`:
-
-```bash
-php artisan satis:install --force
-```
-
 Publish and run migrations:
 
 ```bash
@@ -237,7 +216,6 @@ Set the **Content type** to `application/json` and optionally configure a **Secr
 
 | Command | Description |
 |---------|-------------|
-| `satis:install` | Publish `satis.json` to the project root with interactive setup |
 | `satis:build` | Build Satis repository from packages |
 | `satis:validate` | Validate package credentials and builds |
 | `dependency:packages` | Process and sync package dependencies |

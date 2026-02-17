@@ -139,16 +139,6 @@ $action = new ProcessPackageDependency();
 $action->execute($packageRelease, $requireArray);
 ```
 
-## Installation
-
-```bash
-# Publish satis.json to project root (interactive)
-php artisan satis:install
-
-# With options
-php artisan satis:install --name="my-company/packages" --force
-```
-
 ## Satis Configuration
 
 ```php

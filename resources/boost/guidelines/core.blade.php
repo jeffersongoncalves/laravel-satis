@@ -36,7 +36,6 @@ Key options:
 
 ### Artisan Commands
 
-- `satis:install` — Publish `satis.json` to the project root with interactive setup
 - `satis:build` — Build Satis repository (dispatches `SyncTenantPackages` job)
 - `satis:validate` — Validate builds and package credentials
 - `dependency:packages` — Process and sync package dependencies
