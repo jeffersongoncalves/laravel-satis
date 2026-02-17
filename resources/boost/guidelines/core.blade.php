@@ -25,14 +25,18 @@ Config file: `config/laravel-satis.php`
 
 Key options:
 - `tenancy.enabled` — Enable multi-tenancy with custom resolver
+- `tenancy.ownership_relationship` — Relationship name for tenant ownership
 - `table_prefix` — Database table prefix (default: `satis_`)
 - `storage_disk` / `storage_path` — Where Satis builds are stored
-- `satis` — Base Satis configuration (name, archive settings, stability)
+- `satis_binary` — Custom path to the Satis binary (default: `vendor/bin/satis`)
+- `satis` — Base Satis configuration (name, archive settings, stability, secure_http)
+- `auth.guard` / `auth.provider` — Guard and provider for token authentication
 - `routes.api_prefix` / `routes.composer_prefix` — Route prefixes
 - `models.*` — Override default model classes
 
 ### Artisan Commands
 
+- `satis:install` — Publish `satis.json` to the project root with interactive setup
 - `satis:build` — Build Satis repository (dispatches `SyncTenantPackages` job)
 - `satis:validate` — Validate builds and package credentials
 - `dependency:packages` — Process and sync package dependencies

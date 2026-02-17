@@ -139,16 +139,25 @@ $action = new ProcessPackageDependency();
 $action->execute($packageRelease, $requireArray);
 ```
 
+## Installation
+
+```bash
+# Publish satis.json to project root (interactive)
+php artisan satis:install
+
+# With options
+php artisan satis:install --name="my-company/packages" --force
+```
+
 ## Satis Configuration
 
 ```php
 use JeffersonGoncalves\LaravelSatis\Support\SatisConfig;
 
 $config = SatisConfig::make()
-    ->setPackages($packages)
-    ->setHomepage('https://repo.example.com');
+    ->setPackages($packages);
 
-$json = $config->toJson(); // Complete satis.json content
+$json = $config->toJson(); // Complete satis.json content (homepage is auto-injected)
 ```
 
 ## Authentication Flow
@@ -174,6 +183,7 @@ Enable in config:
     'enabled' => true,
     'model' => \App\Models\Tenant::class,
     'foreign_key' => 'tenant_id',
+    'ownership_relationship' => null,
     'resolver' => fn () => auth()->user()?->tenant_id,
 ],
 ```
