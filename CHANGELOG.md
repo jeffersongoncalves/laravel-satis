@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.9.2 - 2026-02-17
+
+### What's Changed
+
+- **feat:** Add \ static factory method that accepts \ for flexible enum instantiation
+- Add tests for \ covering string values, self instances, and invalid values
+
 ## 1.9.1 - 2026-02-17
 
 ### PHPDoc & PHPStan Improvements
