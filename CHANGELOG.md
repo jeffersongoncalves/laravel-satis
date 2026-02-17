@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.4.3 - 2026-02-17
+
+### Fixed
+
+- Fixed migration stubs using old config key `laravel-satis.*` instead of `satis.*`
+
 ## 1.4.2 - 2026-02-17
 
 ### Changed

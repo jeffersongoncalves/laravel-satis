@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $prefix = config('laravel-satis.table_prefix', 'satis_');
+        $prefix = config('satis.table_prefix', 'satis_');
 
         Schema::create($prefix.'packages', function (Blueprint $table) use ($prefix) {
             $table->id();
@@ -23,9 +23,9 @@ return new class extends Migration
             $table->timestamp('credentials_validated_at')->nullable();
             $table->timestamps();
 
-            if (config('laravel-satis.tenancy.enabled') && config('laravel-satis.tenancy.foreign_key')) {
-                $fk = config('laravel-satis.tenancy.foreign_key');
-                $tenantModel = config('laravel-satis.tenancy.model');
+            if (config('satis.tenancy.enabled') && config('satis.tenancy.foreign_key')) {
+                $fk = config('satis.tenancy.foreign_key');
+                $tenantModel = config('satis.tenancy.model');
                 $tenantTable = (new $tenantModel)->getTable();
 
                 $table->foreignId($fk)
@@ -39,7 +39,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        $prefix = config('laravel-satis.table_prefix', 'satis_');
+        $prefix = config('satis.table_prefix', 'satis_');
 
         Schema::dropIfExists($prefix.'packages');
     }

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $prefix = config('laravel-satis.table_prefix', 'satis_');
+        $prefix = config('satis.table_prefix', 'satis_');
 
         Schema::create($prefix.'dependencies', function (Blueprint $table) {
             $table->id();
@@ -21,7 +21,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        $prefix = config('laravel-satis.table_prefix', 'satis_');
+        $prefix = config('satis.table_prefix', 'satis_');
 
         Schema::dropIfExists($prefix.'dependencies');
     }
