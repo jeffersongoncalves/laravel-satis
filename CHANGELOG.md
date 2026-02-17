@@ -2,6 +2,53 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.6.0 - 2026-02-17
+
+### New Artisan Commands
+
+#### satis:clean
+
+- Removes all Satis repository builds from storage
+- Includes confirmation prompt to prevent accidental deletion
+- Use `--force` flag to skip confirmation (useful for CI/CD)
+
+#### satis:sanitize
+
+- Removes `transport-options` (credentials) from all Satis JSON files
+- Iterates through all directories in the Satis storage path
+- Uses the existing `SanitizeSatisPackages` action for consistency
+- Scheduled daily by default
+
+#### satis:token-build
+
+- Builds Satis repository for token-specific packages
+- Use `--token=ID` to build for a specific token
+- Without options, builds for all tokens that have packages
+- Dispatches `SyncTokenPackages` job for each token
+- Scheduled weekly by default
+
+#### Other Changes
+
+- Updated `config/satis.php` with new schedule entries (`token_build`, `sanitize`)
+- Registered all new commands in ServiceProvider with scheduling support
+- Pint code style fixes (line endings)
+
+#### Available Commands Summary
+
+| Command | Description |
+|---------|-------------|
+| `satis:build` | Build Satis repository (tenant-based) |
+| `satis:token-build` | Build Satis repository (token-based) |
+| `satis:validate` | Validate Satis builds and credentials |
+| `satis:clean` | Clean all Satis builds from storage |
+| `satis:sanitize` | Remove credentials from Satis JSON files |
+| `dependency:packages` | Process package dependencies |
+
+#### Tests
+
+- 11 new tests for the 3 commands
+- Total: 176 tests, 324 assertions
+
 ## 1.5.1 - 2026-02-17
 
 ### What's Changed
