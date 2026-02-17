@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.4.0 - 2026-02-17
+
+### Removed
+
+- Removed `satis:install` command — the `satis.json` is now generated at runtime from `config/satis.php` values
+- Removed `stubs/satis.json.stub` — no longer needed
+
 ## 1.3.5 - 2026-02-17
 
 ### Changed
@@ -44,4 +51,5 @@ All notable changes to this project will be documented in this file.
   - Prompts for repository name
   - Supports `--name` and `--force` options
   - Confirms before overwriting an existing `satis.json`
+  
 - PHPStan/Larastan static analysis configuration (`phpstan.neon.dist` + baseline)
