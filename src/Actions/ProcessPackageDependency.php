@@ -50,7 +50,7 @@ class ProcessPackageDependency
 
     protected function shouldSkip(string $name): bool
     {
-        $skipPrefixes = ['php', 'ext-', 'lib-'];
+        $skipPrefixes = ['php', 'ext-', 'lib-', 'composer-plugin-api'];
 
         foreach ($skipPrefixes as $prefix) {
             if (str_starts_with($name, $prefix)) {

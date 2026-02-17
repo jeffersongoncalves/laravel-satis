@@ -26,7 +26,7 @@ it('creates dependencies from requires list', function () {
         ->and($release->dependencies)->toHaveCount(2);
 });
 
-it('skips php and extension dependencies', function () {
+it('skips php, extension and composer-plugin-api dependencies', function () {
     $package = Package::factory()->create();
     $release = PackageRelease::factory()->create(['package_id' => $package->id]);
 
@@ -35,6 +35,7 @@ it('skips php and extension dependencies', function () {
         'php' => '^8.1',
         'ext-json' => '*',
         'lib-pcre' => '*',
+        'composer-plugin-api' => '^2.0',
     ]);
 
     expect(Dependency::count())->toBe(0)
