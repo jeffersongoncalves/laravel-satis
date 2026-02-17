@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.13.0 - 2026-02-17
+
+### What's Changed
+
+#### New Features
+
+- **Contract/Interface pattern for all models** — Added 8 contract interfaces (`PackageContract`, `TokenContract`, `DependencyContract`, `PackageReleaseContract`, `PackageDownloadContract`, `DependencyPackageReleaseContract`, `PackageTokenContract`, `PackagistContract`) ensuring custom models implement required methods
+- **ModelResolver validation with cache** — `ModelResolver` now validates that configured models implement their corresponding contract and caches resolved classes for performance
+- **Container bindings** — All contracts are bound in the service container, enabling dependency injection via interfaces
+
+#### Config Changes
+
+- Added `package_token` to the `models` config array
+- Updated models config comment to reference contracts
+
+**Full Changelog**: https://github.com/jeffersongoncalves/laravel-satis/compare/1.12.0...1.13.0
+
 ## 1.12.0 - 2026-02-17
 
 ### What's Changed
