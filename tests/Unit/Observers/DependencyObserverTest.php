@@ -71,4 +71,3 @@ it('overrides explicit type with detected type for names with slash', function (
 
     expect($dependency->type)->toBe(DependencyType::Public);
 });
-
