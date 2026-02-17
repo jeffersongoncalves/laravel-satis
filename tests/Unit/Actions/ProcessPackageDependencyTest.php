@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use JeffersonGoncalves\LaravelSatis\Actions\ProcessPackageDependency;
-use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
 use JeffersonGoncalves\LaravelSatis\Jobs\AddDependencyDefaultByPackage;
 use JeffersonGoncalves\LaravelSatis\Models\Dependency;
 use JeffersonGoncalves\LaravelSatis\Models\Package;

@@ -16,12 +16,14 @@ class ValidateTokenSatisBuild implements ShouldQueue
 
     public int $tries = 1;
 
-    public int $timeout = 120;
+    public int $timeout;
 
     public function __construct(
         protected Token $token
     ) {
         $queueConfig = config('satis.queue');
+
+        $this->timeout = $queueConfig['timeout'] ?? 86400;
 
         if ($queueConfig['connection'] ?? null) {
             $this->onConnection($queueConfig['connection']);

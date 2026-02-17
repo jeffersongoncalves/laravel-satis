@@ -10,6 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
+use JeffersonGoncalves\LaravelSatis\Actions\SanitizeSatisPackages;
 use JeffersonGoncalves\LaravelSatis\Models\Token;
 use JeffersonGoncalves\LaravelSatis\Support\SatisConfig;
 
@@ -19,12 +20,14 @@ class SyncTokenPackages implements ShouldQueue
 
     public int $tries = 1;
 
-    public int $timeout = 600;
+    public int $timeout;
 
     public function __construct(
         protected Token $token
     ) {
         $queueConfig = config('satis.queue');
+
+        $this->timeout = $queueConfig['timeout'] ?? 86400;
 
         if ($queueConfig['connection'] ?? null) {
             $this->onConnection($queueConfig['connection']);
@@ -77,6 +80,10 @@ class SyncTokenPackages implements ShouldQueue
                 'token_id' => $this->token->id,
                 'output' => $result->errorOutput(),
             ]);
+
+            return;
         }
+
+        app(SanitizeSatisPackages::class)->sanitizeDirectory($buildPath, $disk);
     }
 }

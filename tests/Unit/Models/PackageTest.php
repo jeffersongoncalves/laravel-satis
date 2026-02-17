@@ -117,3 +117,21 @@ it('can create a validated package', function () {
     expect($package->is_credentials_validated)->toBeTrue()
         ->and($package->credentials_validated_at)->not->toBeNull();
 });
+
+it('casts is_dev to boolean', function () {
+    $package = Package::factory()->create(['is_dev' => 1]);
+
+    expect($package->is_dev)->toBeBool()->toBeTrue();
+});
+
+it('defaults is_dev to false', function () {
+    $package = Package::factory()->create();
+
+    expect($package->is_dev)->toBeFalse();
+});
+
+it('can create a dev package', function () {
+    $package = Package::factory()->dev()->create();
+
+    expect($package->is_dev)->toBeTrue();
+});

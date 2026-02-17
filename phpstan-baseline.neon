@@ -37,6 +37,42 @@ parameters:
 			path: src/Controllers/GithubWebhookController.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$password\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Jobs/AddDependencyDefaultByPackage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Jobs/AddDependencyDefaultByPackage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Jobs/AddDependencyDefaultByPackage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$username\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Jobs/AddDependencyDefaultByPackage.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Packagist\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Models/Packagist.php
+
+		-
+			message: '#^Unsafe call to private method JeffersonGoncalves\\LaravelSatis\\Models\\Packagist\:\:getRepoByPackagist\(\) through static\:\:\.$#'
+			identifier: staticClassAccess.privateMethod
+			count: 1
+			path: src/Models/Packagist.php
+
+		-
 			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Token\:\:\$token\.$#'
 			identifier: property.notFound
 			count: 2
@@ -45,13 +81,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Dependency\:\:\$name\.$#'
 			identifier: property.notFound
-			count: 1
-			path: src/Observers/DependencyObserver.php
-
-		-
-			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Dependency\:\:\$type\.$#'
-			identifier: property.notFound
-			count: 1
+			count: 2
 			path: src/Observers/DependencyObserver.php
 
 		-

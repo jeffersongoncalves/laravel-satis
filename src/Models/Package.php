@@ -27,6 +27,7 @@ class Package extends Model
         'name',
         'type',
         'url',
+        'is_dev',
         'username',
         'password',
         'webhook_secret',
@@ -37,6 +38,7 @@ class Package extends Model
 
     protected $casts = [
         'type' => PackageType::class,
+        'is_dev' => 'boolean',
         'is_credentials_validated' => 'boolean',
         'credentials_validated_at' => 'datetime',
     ];

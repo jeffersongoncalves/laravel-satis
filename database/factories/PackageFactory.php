@@ -18,6 +18,7 @@ class PackageFactory extends Factory
             'url' => $this->faker->url(),
             'username' => $this->faker->userName(),
             'password' => $this->faker->password(),
+            'is_dev' => false,
             'is_credentials_validated' => false,
         ];
     }
@@ -27,6 +28,13 @@ class PackageFactory extends Factory
         return $this->state(fn () => [
             'is_credentials_validated' => true,
             'credentials_validated_at' => now(),
+        ]);
+    }
+
+    public function dev(): static
+    {
+        return $this->state(fn () => [
+            'is_dev' => true,
         ]);
     }
 

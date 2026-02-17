@@ -107,6 +107,7 @@ return [
     'queue' => [
         'connection' => null,
         'queue_name' => null,
+        'timeout' => 86400,
     ],
 
     /*

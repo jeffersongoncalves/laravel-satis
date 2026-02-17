@@ -17,11 +17,13 @@ class ProcessPackageDependency implements ShouldQueue
 
     public int $tries = 1;
 
-    public int $timeout = 300;
+    public int $timeout;
 
     public function __construct()
     {
         $queueConfig = config('satis.queue');
+
+        $this->timeout = $queueConfig['timeout'] ?? 86400;
 
         if ($queueConfig['connection'] ?? null) {
             $this->onConnection($queueConfig['connection']);
