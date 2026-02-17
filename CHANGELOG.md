@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Fixed migration stubs using old config key `laravel-satis.*` instead of `satis.*`
+- Fixed null `table_prefix` handling in models and migration stubs — replaced `config('satis.table_prefix', 'satis_')` with `(config('satis.table_prefix') ?? '')` to properly support null values
 
 ## 1.4.2 - 2026-02-17
 

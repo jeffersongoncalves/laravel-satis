@@ -17,7 +17,7 @@ class PackageToken extends Pivot
 
     public function getTable(): string
     {
-        return config('satis.table_prefix', 'satis_').'package_token';
+        return (config('satis.table_prefix') ?? '').'package_token';
     }
 
     public function package(): BelongsTo

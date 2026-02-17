@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $prefix = config('satis.table_prefix', 'satis_');
+        $prefix = config('satis.table_prefix') ?? '';
 
         Schema::create($prefix.'dependency_package_release', function (Blueprint $table) use ($prefix) {
             $table->id();
@@ -28,7 +28,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        $prefix = config('satis.table_prefix', 'satis_');
+        $prefix = config('satis.table_prefix') ?? '';
 
         Schema::dropIfExists($prefix.'dependency_package_release');
     }

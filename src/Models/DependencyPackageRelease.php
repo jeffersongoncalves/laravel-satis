@@ -19,7 +19,7 @@ class DependencyPackageRelease extends Pivot
 
     public function getTable(): string
     {
-        return config('satis.table_prefix', 'satis_').'dependency_package_release';
+        return (config('satis.table_prefix') ?? '').'dependency_package_release';
     }
 
     public function package(): BelongsTo
