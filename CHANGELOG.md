@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.10.0 - 2026-02-17
+
+### What's Changed
+
+- **fix:** Align model relationships with app naming conventions
+  - Rename `releases()` to `packageReleases()` and `downloads()` to `packageDownloads()` on Package model
+  - Add `packageRelease()` HasOne relationship (latest version) to Package
+  - Add `packageReleaseRequires()` HasMany to Dependency and PackageRelease
+  - Add `dependencyPackageRelease` to ModelResolver and config for extensibility
+  
+
 ## 1.9.2 - 2026-02-17
 
 ### What's Changed
