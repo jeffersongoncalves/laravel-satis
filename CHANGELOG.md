@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.9.1 - 2026-02-17
+
+### PHPDoc & PHPStan Improvements
+
+#### PHPDoc
+
+- Added `@property` and `@property-read` annotations to all 8 models: Package, Token, Dependency, DependencyPackageRelease, PackageDownload, PackageToken, Packagist, PackageRelease
+- Documented virtual attributes (`folder`, `name_provider`, `composer_command`, `webhook_url`, `composer_repository`)
+- Documented all relationship properties with typed collections
+
+#### PHPStan
+
+- Fixed `EloquentTokenProvider` type safety (`retrieveByToken`, `updateRememberToken`, `retrieveByCredentials`)
+- Regenerated baseline: reduced from 25 to 10 ignored errors
+
 ## 1.9.0 - 2026-02-17
 
 ### EloquentTokenProvider Refactored
