@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.10.1 - 2026-02-17
+
+### What's Changed
+
+- **fix:** Default release time to current ISO 8601 date (`2024-02-12T14:56:55+00:00`) when `time` is null in package version data
+
 ## 1.11.0 - 2026-02-17
 
 ### Feature
