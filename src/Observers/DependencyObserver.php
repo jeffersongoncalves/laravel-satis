@@ -11,10 +11,11 @@ class DependencyObserver
 {
     public function creating(Dependency $dependency): void
     {
-        if (empty($dependency->type)) {
+        if (str($dependency->name)->contains('/')) {
             $packagistModel = ModelResolver::packagist();
-            $exists = $packagistModel::where('name', $dependency->name)->exists();
-            $dependency->type = $exists ? DependencyType::Public : DependencyType::Private;
+            $dependency->setAttribute('type', $packagistModel::getDependencyType($dependency->name));
+        } else {
+            $dependency->setAttribute('type', DependencyType::Public);
         }
     }
 

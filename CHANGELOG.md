@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.4.4 - 2026-02-17
+
+### Added
+
+- `Packagist::getDependencyType()` — resolves dependency type by checking local cache first, then querying Packagist API (`repo.packagist.org/p2`)
+- `Packagist::getRepoByPackagist()` — HTTP lookup against Packagist API with `ConnectionException` fallback to private
+
+### Changed
+
+- `DependencyObserver::creating()` — now always sets the type using `Packagist::getDependencyType()` for names containing `/`, and `DependencyType::Public` for names without `/` (e.g. `php`, `ext-mbstring`)
+
 ## 1.4.3 - 2026-02-17
 
 ### Fixed

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Http;
 use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
 use JeffersonGoncalves\LaravelSatis\Models\Packagist;
 
@@ -35,4 +36,58 @@ it('casts type to DependencyType enum', function () {
     ]);
 
     expect($packagist->type)->toBe(DependencyType::Private);
+});
+
+it('returns cached dependency type when packagist entry exists', function () {
+    Packagist::create(['name' => 'illuminate/support', 'type' => 'public']);
+
+    Http::fake();
+
+    $type = Packagist::getDependencyType('illuminate/support');
+
+    expect($type)->toBe(DependencyType::Public);
+
+    Http::assertNothingSent();
+});
+
+it('fetches dependency type from packagist API when entry does not exist', function () {
+    Http::fake([
+        'repo.packagist.org/p2/illuminate/support.json' => Http::response(['packages' => []], 200),
+    ]);
+
+    $type = Packagist::getDependencyType('illuminate/support');
+
+    expect($type)->toBe(DependencyType::Public);
+
+    $packagist = Packagist::where('name', 'illuminate/support')->first();
+    expect($packagist)->not->toBeNull()
+        ->and($packagist->type)->toBe(DependencyType::Public);
+});
+
+it('returns private type when packagist API returns not found', function () {
+    Http::fake([
+        'repo.packagist.org/p2/vendor/private-pkg.json' => Http::response([], 404),
+    ]);
+
+    $type = Packagist::getDependencyType('vendor/private-pkg');
+
+    expect($type)->toBe(DependencyType::Private);
+
+    $packagist = Packagist::where('name', 'vendor/private-pkg')->first();
+    expect($packagist)->not->toBeNull()
+        ->and($packagist->type)->toBe(DependencyType::Private);
+});
+
+it('returns private type when packagist API throws connection exception', function () {
+    Http::fake(function () {
+        throw new \Illuminate\Http\Client\ConnectionException('Connection refused');
+    });
+
+    $type = Packagist::getDependencyType('vendor/unreachable-pkg');
+
+    expect($type)->toBe(DependencyType::Private);
+
+    $packagist = Packagist::where('name', 'vendor/unreachable-pkg')->first();
+    expect($packagist)->not->toBeNull()
+        ->and($packagist->type)->toBe(DependencyType::Private);
 });
