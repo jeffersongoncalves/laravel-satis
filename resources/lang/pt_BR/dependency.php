@@ -2,7 +2,7 @@
 
 return [
     'type' => [
-        'public' => 'Publica',
+        'public' => 'Pública',
         'private' => 'Privada',
     ],
 ];
