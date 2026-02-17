@@ -65,7 +65,6 @@ class LaravelSatisServiceProvider extends PackageServiceProvider
         Auth::provider(
             config('satis.auth.provider'),
             fn ($app, $config) => new EloquentTokenProvider(
-                $app['hash'],
                 config('satis.models.token')
             )
         );
