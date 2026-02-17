@@ -87,7 +87,7 @@ class ProcessPackageDependency implements ShouldQueue
                     'version' => $version,
                 ],
                 [
-                    'time' => $versionData['time'] ?? null,
+                    'time' => $versionData['time'] ?? now()->toIso8601String(),
                     'type' => $versionData['type'] ?? null,
                     'description' => $versionData['description'] ?? null,
                     'homepage' => $versionData['homepage'] ?? null,
