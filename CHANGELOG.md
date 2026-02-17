@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.11.1 - 2026-02-17
+
+### What's Changed
+
+- **refactor:** Remove unused `PackageDownloadObserver` and `PackageReleaseObserver` (empty methods)
+- **refactor:** Remove cache clearing logic from all observers (`PackageObserver`, `DependencyObserver`, `TokenObserver`)
+- **fix:** Generate `webhook_secret` only for Github type packages (Composer packages get null)
+- **fix:** Remove `username` and `webhook_secret` from Package `$hidden` (keep only `password`)
+
 ## 1.10.1 - 2026-02-17
 
 ### What's Changed
