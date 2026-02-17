@@ -12,7 +12,7 @@ class TokenObserver
     public function creating(Token $token): void
     {
         if (empty($token->token)) {
-            $token->token = $token::generateToken();
+            $token->token = $token::generateCode('token');
         }
     }
 

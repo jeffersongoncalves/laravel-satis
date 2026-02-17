@@ -2,6 +2,7 @@
 
 namespace JeffersonGoncalves\LaravelSatis\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -49,6 +50,19 @@ class Package extends Model
         'webhook_secret',
     ];
 
+    public static function getColumnCode(): array
+    {
+        return ['webhook_secret', 'reference'];
+    }
+
+    public static function getLengthCode(): array
+    {
+        return [
+            'webhook_secret' => 40,
+            'reference' => 20,
+        ];
+    }
+
     public function getTable(): string
     {
         return (config('satis.table_prefix') ?? '').'packages';
@@ -74,5 +88,28 @@ class Package extends Model
     public function downloads(): HasMany
     {
         return $this->hasMany(ModelResolver::packageDownload());
+    }
+
+    protected function folder(): Attribute
+    {
+        return Attribute::get(fn (): string => str($this->url)->replace(':', '-')->replace('/', '-')->toString());
+    }
+
+    protected function nameProvider(): Attribute
+    {
+        return Attribute::get(fn (): string => str($this->name)->replace('/', '~')->toString());
+    }
+
+    protected function composerCommand(): Attribute
+    {
+        return Attribute::get(fn (): string => $this->is_dev
+            ? "composer require --dev {$this->name}"
+            : "composer require {$this->name}"
+        );
+    }
+
+    protected function webhookUrl(): Attribute
+    {
+        return Attribute::get(fn (): string => route('webhooks.github', ['package' => $this->reference]));
     }
 }

@@ -6,23 +6,23 @@ use Illuminate\Support\Str;
 
 trait GenerateCode
 {
-    public static function generateUniqueCode(int $length = 32): string
+    abstract public static function getColumnCode(): array;
+
+    abstract public static function getLengthCode(): array;
+
+    public static function generateCode(string $column): string
     {
-        return Str::random($length);
+        do {
+            $code = Str::random(self::getLengthCodeByColumn($column));
+        } while (self::query()->where($column, $code)->count());
+
+        return $code;
     }
 
-    public static function generateToken(): string
+    public static function getLengthCodeByColumn(string $column): int
     {
-        return static::generateUniqueCode(64);
-    }
+        $lengths = self::getLengthCode();
 
-    public static function generateWebhookSecret(): string
-    {
-        return static::generateUniqueCode(40);
-    }
-
-    public static function generateReference(): string
-    {
-        return static::generateUniqueCode(20);
+        return $lengths[$column] ?? 8;
     }
 }

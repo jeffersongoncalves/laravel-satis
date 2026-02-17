@@ -2,7 +2,8 @@
 
 namespace JeffersonGoncalves\LaravelSatis\Models;
 
-use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,8 +12,9 @@ use JeffersonGoncalves\LaravelSatis\Concerns\HasTenancy;
 use JeffersonGoncalves\LaravelSatis\Database\Factories\TokenFactory;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
-class Token extends Model implements Authenticatable
+class Token extends Model implements AuthenticatableContract
 {
+    use Authenticatable;
     use GenerateCode;
     use HasFactory;
     use HasTenancy;
@@ -31,6 +33,18 @@ class Token extends Model implements Authenticatable
     protected $hidden = [
         'token',
     ];
+
+    public static function getColumnCode(): array
+    {
+        return ['token'];
+    }
+
+    public static function getLengthCode(): array
+    {
+        return [
+            'token' => 64,
+        ];
+    }
 
     public function getTable(): string
     {
@@ -54,12 +68,7 @@ class Token extends Model implements Authenticatable
         return 'token';
     }
 
-    public function getAuthIdentifier(): string
-    {
-        return $this->token;
-    }
-
-    public function getAuthPassword(): string
+    public function getAuthIdentifier(): mixed
     {
         return $this->token;
     }
@@ -67,20 +76,5 @@ class Token extends Model implements Authenticatable
     public function getAuthPasswordName(): string
     {
         return 'token';
-    }
-
-    public function getRememberToken(): ?string
-    {
-        return null;
-    }
-
-    public function setRememberToken($value): void
-    {
-        //
-    }
-
-    public function getRememberTokenName(): string
-    {
-        return '';
     }
 }

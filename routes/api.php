@@ -18,5 +18,6 @@ Route::prefix($prefix)
         Route::post($composerPrefix, [DownloadComposerController::class, 'store'])
             ->middleware(EnsureUserHasLicense::class);
 
-        Route::post('webhooks/github/{package:reference}', [GithubWebhookController::class, 'handle']);
+        Route::post('webhooks/github/{package:reference}', [GithubWebhookController::class, 'handle'])
+            ->name('webhooks.github');
     });

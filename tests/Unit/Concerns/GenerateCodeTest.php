@@ -3,39 +3,52 @@
 use JeffersonGoncalves\LaravelSatis\Models\Package;
 use JeffersonGoncalves\LaravelSatis\Models\Token;
 
-it('generates unique code with default length', function () {
-    $code = Package::generateUniqueCode();
-
-    expect($code)->toBeString()
-        ->and(strlen($code))->toBe(32);
+it('returns column codes for package', function () {
+    expect(Package::getColumnCode())->toBe(['webhook_secret', 'reference']);
 });
 
-it('generates unique code with custom length', function () {
-    $code = Package::generateUniqueCode(16);
+it('returns column codes for token', function () {
+    expect(Token::getColumnCode())->toBe(['token']);
+});
 
-    expect(strlen($code))->toBe(16);
+it('returns length codes for package', function () {
+    expect(Package::getLengthCode())->toBe([
+        'webhook_secret' => 40,
+        'reference' => 20,
+    ]);
+});
+
+it('returns length codes for token', function () {
+    expect(Token::getLengthCode())->toBe([
+        'token' => 64,
+    ]);
+});
+
+it('returns default length for unknown column', function () {
+    expect(Package::getLengthCodeByColumn('unknown'))->toBe(8);
 });
 
 it('generates token with 64 characters', function () {
-    $token = Token::generateToken();
+    $token = Token::generateCode('token');
 
-    expect(strlen($token))->toBe(64);
+    expect($token)->toBeString()
+        ->and(strlen($token))->toBe(64);
 });
 
 it('generates webhook secret with 40 characters', function () {
-    $secret = Package::generateWebhookSecret();
+    $secret = Package::generateCode('webhook_secret');
 
     expect(strlen($secret))->toBe(40);
 });
 
 it('generates reference with 20 characters', function () {
-    $reference = Package::generateReference();
+    $reference = Package::generateCode('reference');
 
     expect(strlen($reference))->toBe(20);
 });
 
 it('generates unique codes on each call', function () {
-    $codes = collect(range(1, 10))->map(fn () => Package::generateUniqueCode());
+    $codes = collect(range(1, 10))->map(fn () => Package::generateCode('reference'));
 
     expect($codes->unique()->count())->toBe(10);
 });

@@ -2,6 +2,7 @@
 
 namespace JeffersonGoncalves\LaravelSatis\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,6 +36,11 @@ class PackageRelease extends Model
     public function package(): BelongsTo
     {
         return $this->belongsTo(ModelResolver::package());
+    }
+
+    protected function name(): Attribute
+    {
+        return Attribute::get(fn (): string => $this->package->name.' - '.$this->version);
     }
 
     public function dependencies(): BelongsToMany

@@ -10,11 +10,11 @@ class PackageObserver
     public function creating(Package $package): void
     {
         if (empty($package->webhook_secret)) {
-            $package->webhook_secret = $package::generateWebhookSecret();
+            $package->webhook_secret = $package::generateCode('webhook_secret');
         }
 
         if (empty($package->reference)) {
-            $package->reference = $package::generateReference();
+            $package->reference = $package::generateCode('reference');
         }
     }
 

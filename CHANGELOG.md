@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.8.0 - 2026-02-17
+
+### Refactored Models & Traits
+
+#### GenerateCode Trait
+
+- Rewritten to use generic `generateCode(string $column)` method with database uniqueness check
+- Added abstract methods `getColumnCode()` and `getLengthCode()` that models must implement
+- Added `getLengthCodeByColumn()` helper with fallback to 8 characters
+- Removed old methods: `generateUniqueCode()`, `generateToken()`, `generateWebhookSecret()`, `generateReference()`
+
+#### Package Model
+
+- Implemented `getColumnCode()` and `getLengthCode()` for `webhook_secret` (40) and `reference` (20)
+- Added virtual attributes: `folder`, `name_provider`, `composer_command`, `webhook_url`
+- Named webhook route `webhooks.github` for URL generation
+
+#### Token Model
+
+- Implemented `getColumnCode()` and `getLengthCode()` for `token` (64)
+- Now uses `Illuminate\Auth\Authenticatable` trait with `AuthenticatableContract` interface
+- Overrides `getAuthIdentifierName()`, `getAuthIdentifier()`, and `getAuthPasswordName()` for token-based auth
+
+#### PackageRelease Model
+
+- Added virtual attribute `name` (combines package name and version)
+
+#### Tests
+
+- Rewrote GenerateCodeTest for new API (10 tests covering columns, lengths, generation, uniqueness)
+- Updated TokenFactory to use `generateCode('token')`
+- Total: 192 tests, 346 assertions
+
 ## 1.7.0 - 2026-02-17
 
 ### Intelligent Validation with Timestamp Comparison

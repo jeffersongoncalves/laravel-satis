@@ -14,7 +14,7 @@ class TokenFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'token' => Token::generateToken(),
+            'token' => Token::generateCode('token'),
         ];
     }
 }
