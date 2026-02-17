@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.12.0 - 2026-02-17
+
+### What's Changed
+
+- **feat:** Dispatch `ValidatePackageCredentialsJob` automatically on package creation to validate credentials via queue
+
 ## 1.11.1 - 2026-02-17
 
 ### What's Changed
