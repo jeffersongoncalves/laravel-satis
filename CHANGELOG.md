@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.8.1 - 2026-02-17
+
+### Token Model Enhancements
+
+- Added `email` default value `'token'` in migration and model `$attributes`
+- Added virtual attribute `composer_command` — generates `composer global config http-basic.{host} token {token}`
+- Added virtual attribute `composer_repository` — generates `composer config repositories.{name} composer {url}`
+- Updated TokenFactory to use `'token'` as default email
+
 ## 1.8.0 - 2026-02-17
 
 ### Refactored Models & Traits

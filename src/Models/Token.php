@@ -4,6 +4,7 @@ namespace JeffersonGoncalves\LaravelSatis\Models;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -23,6 +24,10 @@ class Token extends Model implements AuthenticatableContract
     {
         return TokenFactory::new();
     }
+
+    protected $attributes = [
+        'email' => 'token',
+    ];
 
     protected $fillable = [
         'name',
@@ -61,6 +66,25 @@ class Token extends Model implements AuthenticatableContract
             'token_id',
             'package_id'
         )->withTimestamps();
+    }
+
+    protected function composerCommand(): Attribute
+    {
+        return Attribute::get(function (): string {
+            $host = str(config('app.url'))->replace(['http://', 'https://'], '')->toString();
+
+            return "composer global config http-basic.{$host} token {$this->token}";
+        });
+    }
+
+    protected function composerRepository(): Attribute
+    {
+        return Attribute::get(function (): string {
+            $host = config('app.url');
+            $name = str($host)->replace(['http://', 'https://'], '')->toString();
+
+            return "composer config repositories.$name composer $host";
+        });
     }
 
     public function getAuthIdentifierName(): string
