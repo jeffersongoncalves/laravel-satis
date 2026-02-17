@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.1 - 2026-02-17
+
+### Fixed
+
+- Corrected `vendor:publish` tag names to `satis-config` and `satis-migrations`
+
 ## 1.3.0 - 2026-02-17
 
 ### Added
