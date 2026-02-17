@@ -1,0 +1,115 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\PackageRelease\:\:\$package_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Actions/ProcessPackageDependency.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$password\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Actions/ValidatePackageCredentials.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Actions/ValidatePackageCredentials.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$url\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Actions/ValidatePackageCredentials.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$username\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Actions/ValidatePackageCredentials.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$webhook_secret\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/GithubWebhookController.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Token\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Models/Token.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Dependency\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Observers/DependencyObserver.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Dependency\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Observers/DependencyObserver.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$reference\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Observers/PackageObserver.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$webhook_secret\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Observers/PackageObserver.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Token\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Observers/TokenObserver.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Support/SatisConfig.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$password\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Support/SatisConfig.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Support/SatisConfig.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Support/SatisConfig.php
+
+		-
+			message: '#^Access to an undefined property JeffersonGoncalves\\LaravelSatis\\Models\\Package\:\:\$username\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Support/SatisConfig.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),mixed\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: src/Support/SatisConfig.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: src/Support/SatisConfig.php
