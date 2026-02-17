@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.13.1 - 2026-02-17
+
+### What's Changed
+
+#### Bug Fixes
+
+- **Skip `composer-plugin-api` in dependency processing** — Prevents `composer-plugin-api` from being listed as a package dependency alongside `php`, `ext-*`, and `lib-*`
+
+**Full Changelog**: https://github.com/jeffersongoncalves/laravel-satis/compare/1.13.0...1.13.1
+
 ## 1.13.0 - 2026-02-17
 
 ### What's Changed
