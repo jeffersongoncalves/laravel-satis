@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.5.1 - 2026-02-17
+
+### What's Changed
+
+#### New Features
+
+- **`is_dev` field on Package**: Boolean field to differentiate `composer require` from `composer require --dev` packages
+- **Configurable queue timeout**: New `config('satis.queue.timeout')` option (default: 86400s / 24h) applied to all jobs
+- **Sanitize transport-options**: `SanitizeSatisPackages::sanitizeDirectory()` removes credential-containing `transport-options` from Satis JSON output files (p2/ and include/ directories)
+
+#### Improvements
+
+- **Post-build sanitization**: `SyncTenantPackages` and `SyncTokenPackages` automatically sanitize JSON files after successful builds
+- **Post-build dependency processing**: `SyncTenantPackages` dispatches `ProcessPackageDependency` after successful builds
+- **Factory state**: New `dev()` factory state for creating dev packages
+
+#### Internal
+
+- Updated PHPStan baseline
+- Applied Pint code formatting
+- Added tests for is_dev, sanitizeDirectory, and transport-options removal (158 tests, 265 assertions)
+
 ## 1.5.0 - 2026-02-17
 
 ### Added
@@ -46,6 +68,7 @@ All notable changes to this project will be documented in this file.
 
 - Support for `null` `composer_prefix` — serves composer routes without a URL prefix (e.g. `/packages.json` instead of `/satis/packages.json`)
 - Handles tenancy prefix correctly when `composer_prefix` is `null`
+
 ## 1.4.0 - 2026-02-17
 
 ### Removed
