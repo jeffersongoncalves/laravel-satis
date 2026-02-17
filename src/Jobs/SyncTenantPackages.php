@@ -10,6 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
+use JeffersonGoncalves\LaravelSatis\Actions\CreateAuthJson;
 use JeffersonGoncalves\LaravelSatis\Actions\SanitizeSatisPackages;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 use JeffersonGoncalves\LaravelSatis\Support\SatisConfig;
@@ -72,9 +73,14 @@ class SyncTenantPackages implements ShouldQueue
         $fullConfigPath = $disk->path($configPath);
         $fullBuildPath = $disk->path($buildPath);
 
-        $result = Process::timeout($this->timeout)->run([
-            'php', $satisBinary, 'build', $fullConfigPath, $fullBuildPath,
-        ]);
+        $composerHomePath = $storagePath.'/'.$tenantPrefix.'composer';
+        $composerHome = app(CreateAuthJson::class)->execute($packages, $composerHomePath);
+
+        $result = Process::timeout($this->timeout)
+            ->env(['COMPOSER_HOME' => $composerHome])
+            ->run([
+                'php', $satisBinary, 'build', $fullConfigPath, $fullBuildPath,
+            ]);
 
         if (! $result->successful()) {
             Log::error('Satis build failed', [

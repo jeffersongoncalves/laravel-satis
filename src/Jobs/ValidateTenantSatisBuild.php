@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use JeffersonGoncalves\LaravelSatis\Actions\ValidatePackageCredentials;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
@@ -50,6 +51,10 @@ class ValidateTenantSatisBuild implements ShouldQueue
             $validator->execute($package);
         }
 
+        if ($this->shouldRebuild($packageModel)) {
+            SyncTenantPackages::dispatch($this->tenantId);
+        }
+
         $tokenModel = ModelResolver::token();
         $tokensQuery = $tokenModel::query();
 
@@ -63,5 +68,35 @@ class ValidateTenantSatisBuild implements ShouldQueue
         foreach ($tokens as $token) {
             ValidateTokenSatisBuild::dispatch($token);
         }
+    }
+
+    protected function shouldRebuild(string $packageModel): bool
+    {
+        $disk = Storage::disk(config('satis.storage_disk'));
+        $storagePath = config('satis.storage_path', 'satis');
+        $tenantPrefix = $this->tenantId ? $this->tenantId.'/' : '';
+        $buildPath = $storagePath.'/'.$tenantPrefix.'tenant';
+        $packagesJson = $buildPath.'/packages.json';
+
+        if (! $disk->exists($packagesJson)) {
+            return true;
+        }
+
+        $lastBuildTime = $disk->lastModified($packagesJson);
+
+        $query = $packageModel::query();
+
+        if ($this->tenantId && config('satis.tenancy.enabled')) {
+            $fk = config('satis.tenancy.foreign_key');
+            $query->withoutGlobalScope('satis-tenant')->where($fk, $this->tenantId);
+        }
+
+        $lastPackageUpdate = $query->max('updated_at');
+
+        if ($lastPackageUpdate && strtotime($lastPackageUpdate) > $lastBuildTime) {
+            return true;
+        }
+
+        return false;
     }
 }

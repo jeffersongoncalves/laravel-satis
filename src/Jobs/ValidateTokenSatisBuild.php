@@ -48,6 +48,13 @@ class ValidateTokenSatisBuild implements ShouldQueue
             }
         }
 
+        $tenantBuildPath = $storagePath.'/'.$tenantPrefix.'tenant';
+        $tenantPackagesJson = $tenantBuildPath.'/packages.json';
+
+        if (! $disk->exists($tenantPackagesJson)) {
+            return;
+        }
+
         $buildPath = $storagePath.'/'.$tenantPrefix.$this->token->id;
         $packagesJson = $buildPath.'/packages.json';
 
@@ -60,6 +67,19 @@ class ValidateTokenSatisBuild implements ShouldQueue
         $content = json_decode($disk->get($packagesJson), true);
 
         if (empty($content) || ! isset($content['packages'])) {
+            SyncTokenPackages::dispatch($this->token);
+
+            return;
+        }
+
+        $lastBuildTime = $disk->lastModified($packagesJson);
+
+        $lastPivotUpdate = $this->token->packages()
+            ->withPivot('updated_at')
+            ->get()
+            ->max('pivot.updated_at');
+
+        if ($lastPivotUpdate && strtotime($lastPivotUpdate) > $lastBuildTime) {
             SyncTokenPackages::dispatch($this->token);
         }
     }
