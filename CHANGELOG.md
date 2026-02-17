@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.7.0 - 2026-02-17
+
+### Intelligent Validation with Timestamp Comparison
+
+#### ValidateTenantSatisBuild
+
+- Compares `packages.json` modification time with `Package::max('updated_at')`
+- Only triggers rebuild (`SyncTenantPackages`) when packages have been updated since the last build
+- Skips unnecessary rebuilds when builds are already up to date
+- Falls back to rebuild if `packages.json` does not exist
+
+#### ValidateTokenSatisBuild
+
+- Compares `packages.json` modification time with pivot table `updated_at` timestamp
+- Only triggers rebuild (`SyncTokenPackages`) when token-package associations changed since last build
+- Checks tenant build exists before attempting token validation
+- Falls back to rebuild if token build is missing or has empty/invalid content
+
+#### auth.json Support
+
+- New `CreateAuthJson` action generates `auth.json` with `http-basic` credentials for Composer-type packages
+- `SyncTenantPackages` now sets `COMPOSER_HOME` environment variable pointing to the auth.json directory
+- Enables authenticated access to private Composer repositories during Satis builds
+- Automatically filters out GitHub packages (they use different auth mechanism)
+
+#### Tests
+
+- 13 new tests covering all validation scenarios and auth.json generation
+- Total: 189 tests, 343 assertions
+
 ## 1.6.0 - 2026-02-17
 
 ### New Artisan Commands
