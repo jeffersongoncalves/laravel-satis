@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.9.0 - 2026-02-17
+
+### EloquentTokenProvider Refactored
+
+#### Breaking Changes
+
+- Removed `Hasher` dependency from `EloquentTokenProvider` constructor (now receives only the model class)
+- `validateCredentials()` now always returns `true` (authentication is handled by credential lookup)
+- `retrieveById()` uses `getAuthIdentifierName()` (model `id`) instead of `getAuthPasswordName()`
+
+#### New Features
+
+- Added `withQuery()` / `getQueryCallback()` for query customization before user retrieval
+- Added `getModel()` / `setModel()` accessors
+- Added `createModel()` and `newModelQuery()` following Laravel's standard Eloquent provider pattern
+- `retrieveByCredentials()` now supports array values (`whereIn`), closures, and `Arrayable` instances
+
+#### Fixes
+
+- Updated `LaravelSatisServiceProvider` to match new constructor signature
+
 ## 1.8.2 - 2026-02-17
 
 ### Token Auth Simplification
