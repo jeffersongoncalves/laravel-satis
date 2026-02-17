@@ -56,3 +56,23 @@ it('rejects invalid token', function () {
 
     $response->assertUnauthorized();
 });
+
+it('serves routes without prefix when composer_prefix is null', function () {
+    Bus::fake();
+
+    config(['satis.routes.composer_prefix' => null]);
+
+    // Re-register composer routes with null prefix
+    $routeFile = dirname(__DIR__, 3).'/routes/composer.php';
+    require $routeFile;
+
+    $token = Token::factory()->create();
+
+    $response = $this->withHeaders([
+        'PHP_AUTH_USER' => 'composer',
+        'PHP_AUTH_PW' => $token->token,
+    ])->getJson('/packages.json');
+
+    $response->assertOk()
+        ->assertJsonStructure(['packages', 'notify-batch']);
+});

@@ -143,6 +143,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Prefixes and middleware for package routes.
+    | Set composer_prefix to null to serve routes without a prefix.
     |
     */
     'routes' => [

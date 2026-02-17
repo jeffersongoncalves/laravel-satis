@@ -59,7 +59,7 @@ class SyncTokenPackages implements ShouldQueue
 
         $satisConfig = SatisConfig::make()
             ->setPackages($packages)
-            ->setHomepage(url(config('satis.routes.composer_prefix', 'satis')));
+            ->setHomepage(url(config('satis.routes.composer_prefix') ?? '/'));
 
         $configPath = $buildPath.'/satis.json';
         $disk->put($configPath, $satisConfig->toJson());

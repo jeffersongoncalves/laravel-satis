@@ -7,14 +7,14 @@ use JeffersonGoncalves\LaravelSatis\Controllers\PackagesController;
 use JeffersonGoncalves\LaravelSatis\Controllers\PackagesV2Controller;
 use JeffersonGoncalves\LaravelSatis\Middleware\EnsureUserHasLicense;
 
-$prefix = config('satis.routes.composer_prefix', 'satis');
+$prefix = config('satis.routes.composer_prefix');
 $middleware = config('satis.routes.middleware', ['api']);
 
 if (config('satis.tenancy.enabled')) {
-    $prefix .= '/{tenant}';
+    $prefix = ($prefix ? $prefix.'/' : '').'{tenant}';
 }
 
-Route::prefix($prefix)
+Route::prefix($prefix ?? '')
     ->middleware([...$middleware, EnsureUserHasLicense::class])
     ->group(function () {
         Route::get('packages.json', [PackagesController::class, 'index']);
