@@ -51,14 +51,14 @@ php artisan satis:install --force
 Publish and run migrations:
 
 ```bash
-php artisan vendor:publish --tag="laravel-satis-migrations"
+php artisan vendor:publish --tag="satis-migrations"
 php artisan migrate
 ```
 
 Publish the config (optional):
 
 ```bash
-php artisan vendor:publish --tag="laravel-satis-config"
+php artisan vendor:publish --tag="satis-config"
 ```
 
 ## Configuration
