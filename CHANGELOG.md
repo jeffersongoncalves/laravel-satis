@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.14.7 - 2026-02-18
+
+### Bug Fixes
+
+- **SyncTenantPackages / SyncTokenPackages**: Process releases and dependencies even on partial build success — with `--skip-errors`, the `packages.json` is still generated for packages that built successfully
+- **SyncTokenPackages**: Restore `ProcessPackageDependency::dispatch()` that was lost during refactoring
+- Both jobs now check if `packages.json` exists before sanitizing and processing, instead of early-returning on build failure
+
 ## 1.14.6 - 2026-02-18
 
 ### Bug Fixes
