@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.14.2 - 2026-02-18
+
+### Bug Fixes
+
+- **SatisConfig**: Normalize config keys from underscores to hyphens (`output_html` → `output-html`, `minimum_stability` → `minimum-stability`, `secure_http` → `secure-http`, `skip_dev` → `skip-dev`) to match the Satis JSON schema, fixing `The json config file does not match the expected JSON schema` error
+- Added recursive `normalizeKeys()` method to handle already published configs with underscore keys
+
 ## 1.14.1 - 2026-02-18
 
 ### Bug Fixes
