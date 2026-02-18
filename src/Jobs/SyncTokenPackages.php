@@ -94,10 +94,12 @@ class SyncTokenPackages implements ShouldQueue
                 'token_id' => $this->token->id,
                 'output' => $result->errorOutput(),
             ]);
-
-            return;
         }
 
-        app(SanitizeSatisPackages::class)->sanitizeDirectory($buildPath, $disk);
+        if ($disk->exists($buildPath.'/packages.json')) {
+            app(SanitizeSatisPackages::class)->sanitizeDirectory($buildPath, $disk);
+
+            ProcessPackageDependency::dispatch();
+        }
     }
 }

@@ -95,13 +95,13 @@ class SyncTenantPackages implements ShouldQueue
                 'tenant_id' => $this->tenantId,
                 'output' => $result->errorOutput(),
             ]);
-
-            return;
         }
 
-        app(SanitizeSatisPackages::class)->sanitizeDirectory($buildPath, $disk);
+        if ($disk->exists($buildPath.'/packages.json')) {
+            app(SanitizeSatisPackages::class)->sanitizeDirectory($buildPath, $disk);
 
-        ProcessPackageDependency::dispatch();
+            ProcessPackageDependency::dispatch();
+        }
 
         $tokensQuery = $tokenModel::query();
 
