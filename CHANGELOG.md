@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.14.0 - 2026-02-18
+
+**Full Changelog**: https://github.com/jeffersongoncalves/laravel-satis/compare/1.13.1...1.14.0
+
 ## 1.13.1 - 2026-02-17
 
 ### What's Changed
