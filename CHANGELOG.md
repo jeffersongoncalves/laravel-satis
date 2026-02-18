@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.14.8 - 2026-02-18
+
+### Bug Fixes
+
+- Fix Pint code style issues
+- Fix PHPStan error: add type annotation for Token model in `EnsureUserHasLicense` middleware
+- Update `SatisConfigTest`: verify `options` header only on GitHub VCS repos, add test confirming Composer repos exclude `options`
+- Process releases and dependencies even on partial build success (from 1.14.7)
+
 ## 1.14.7 - 2026-02-18
 
 ### Bug Fixes
