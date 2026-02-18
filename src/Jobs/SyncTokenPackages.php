@@ -99,7 +99,9 @@ class SyncTokenPackages implements ShouldQueue
         if ($disk->exists($buildPath.'/packages.json')) {
             app(SanitizeSatisPackages::class)->sanitizeDirectory($buildPath, $disk);
 
-            ProcessPackageDependency::dispatch();
+            $packages->each(function ($package) {
+                ProcessPackageDependency::dispatch($package);
+            });
         }
     }
 }

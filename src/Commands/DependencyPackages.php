@@ -4,6 +4,7 @@ namespace JeffersonGoncalves\LaravelSatis\Commands;
 
 use Illuminate\Console\Command;
 use JeffersonGoncalves\LaravelSatis\Jobs\ProcessPackageDependency;
+use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 class DependencyPackages extends Command
 {
@@ -13,9 +14,14 @@ class DependencyPackages extends Command
 
     public function handle(): int
     {
-        ProcessPackageDependency::dispatch();
+        $packageModel = ModelResolver::package();
+        $packages = $packageModel::withoutGlobalScopes()->get();
 
-        $this->info('Dispatched dependency processing job.');
+        $packages->each(function ($package) {
+            ProcessPackageDependency::dispatch($package);
+        });
+
+        $this->info("Dispatched dependency processing for {$packages->count()} packages.");
 
         return self::SUCCESS;
     }

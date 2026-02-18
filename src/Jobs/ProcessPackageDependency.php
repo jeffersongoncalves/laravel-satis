@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use JeffersonGoncalves\LaravelSatis\Actions\ProcessPackageDependency as ProcessPackageDependencyAction;
+use JeffersonGoncalves\LaravelSatis\Models\Package;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 class ProcessPackageDependency implements ShouldQueue
@@ -19,8 +20,9 @@ class ProcessPackageDependency implements ShouldQueue
 
     public int $timeout;
 
-    public function __construct()
-    {
+    public function __construct(
+        protected Package $package
+    ) {
         $queueConfig = config('satis.queue');
 
         $this->timeout = $queueConfig['timeout'] ?? 86400;
@@ -39,42 +41,38 @@ class ProcessPackageDependency implements ShouldQueue
         $disk = Storage::disk(config('satis.storage_disk'));
         $storagePath = config('satis.storage_path', 'satis');
 
-        $packageModel = ModelResolver::package();
-        $packages = $packageModel::withoutGlobalScopes()->get();
-
-        foreach ($packages as $package) {
-            $this->processPackageDependencies($disk, $storagePath, $package, $action);
-        }
-    }
-
-    protected function processPackageDependencies($disk, string $storagePath, $package, ProcessPackageDependencyAction $action): void
-    {
         $tenantPrefix = '';
         if (config('satis.tenancy.enabled')) {
             $fk = config('satis.tenancy.foreign_key');
-            $tenantId = $package->{$fk} ?? null;
+            $tenantId = $this->package->{$fk} ?? null;
             if ($tenantId) {
                 $tenantPrefix = $tenantId.'/';
             }
         }
 
-        $buildPath = $storagePath.'/'.$tenantPrefix.'tenant';
-        $packagesJson = $buildPath.'/packages.json';
+        $composerCachePath = $storagePath.'/'.$tenantPrefix.'composer/cache/repo/'.$this->package->folder;
 
-        if (! $disk->exists($packagesJson)) {
+        $providerFile = $composerCachePath.'/provider-'.$this->package->name_provider.'.json';
+        $packagesFile = $composerCachePath.'/packages.json';
+
+        if ($disk->exists($providerFile)) {
+            $filename = $providerFile;
+        } elseif ($disk->exists($packagesFile)) {
+            $filename = $packagesFile;
+        } else {
             return;
         }
 
-        $content = json_decode($disk->get($packagesJson), true);
+        $content = json_decode($disk->get($filename), true);
         $packagesData = $content['packages'] ?? [];
 
-        if (! isset($packagesData[$package->name])) {
+        if (! isset($packagesData[$this->package->name])) {
             return;
         }
 
         $releaseModel = ModelResolver::packageRelease();
 
-        foreach ($packagesData[$package->name] as $versionData) {
+        foreach ($packagesData[$this->package->name] as $versionData) {
             $version = $versionData['version'] ?? null;
 
             if (! $version) {
@@ -83,19 +81,19 @@ class ProcessPackageDependency implements ShouldQueue
 
             $release = $releaseModel::updateOrCreate(
                 [
-                    'package_id' => $package->id,
+                    'package_id' => $this->package->id,
                     'version' => $version,
                 ],
                 [
-                    'time' => $versionData['time'] ?? now()->toIso8601String(),
-                    'type' => $versionData['type'] ?? null,
-                    'description' => $versionData['description'] ?? null,
-                    'homepage' => $versionData['homepage'] ?? null,
+                    'time' => ! empty($versionData['time']) ? $versionData['time'] : now()->toIso8601String(),
+                    'type' => ! empty($versionData['type']) ? $versionData['type'] : 'library',
+                    'description' => ! empty($versionData['description']) ? $versionData['description'] : '',
+                    'homepage' => ! empty($versionData['homepage']) ? $versionData['homepage'] : '',
                 ]
             );
 
             $requires = $versionData['require'] ?? [];
-            $action->execute($release, $requires, $package);
+            $action->execute($release, $requires, $this->package);
         }
     }
 }
