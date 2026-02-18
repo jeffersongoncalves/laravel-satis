@@ -50,7 +50,7 @@ class SatisConfig
 
     public function toArray(): array
     {
-        $config = $this->config;
+        $config = $this->normalizeKeys($this->config);
         $config['homepage'] = $this->homepage ?? url('/');
         $config['notify-batch'] = $this->notifyBatch ?? route('composer.downloads');
         $config['repositories'] = $this->buildRepositories();
@@ -91,6 +91,18 @@ class SatisConfig
         return $this->packages->mapWithKeys(function (Package $package) {
             return [$package->name => '*'];
         })->toArray();
+    }
+
+    protected function normalizeKeys(array $data): array
+    {
+        $normalized = [];
+
+        foreach ($data as $key => $value) {
+            $normalizedKey = is_string($key) ? str_replace('_', '-', $key) : $key;
+            $normalized[$normalizedKey] = is_array($value) ? $this->normalizeKeys($value) : $value;
+        }
+
+        return $normalized;
     }
 
     protected function resolveRepositoryType(Package $package): string

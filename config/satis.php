@@ -89,13 +89,13 @@ return [
     */
     'satis' => [
         'name' => 'my/repository',
-        'output_html' => false,
+        'output-html' => false,
         'archive' => [
             'directory' => 'archives',
-            'skip_dev' => true,
+            'skip-dev' => true,
         ],
-        'minimum_stability' => 'stable',
-        'secure_http' => false,
+        'minimum-stability' => 'stable',
+        'secure-http' => false,
     ],
 
     /*
