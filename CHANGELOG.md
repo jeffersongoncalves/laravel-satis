@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.14.1 - 2026-02-18
+
+### Bug Fixes
+
+- **SyncTokenPackages**: Set `COMPOSER_HOME` environment variable and create `auth.json` via `CreateAuthJson` action, fixing `The HOME or COMPOSER_HOME environment variable must be set` error during token builds
+
 ## 1.14.0 - 2026-02-18
 
 **Full Changelog**: https://github.com/jeffersongoncalves/laravel-satis/compare/1.13.1...1.14.0
