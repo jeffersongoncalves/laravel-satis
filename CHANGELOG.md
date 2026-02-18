@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.14.3 - 2026-02-18
+
+### Bug Fixes
+
+- **satis config**: Move `secure-http` from top-level to `config` object — it's a Composer config option, not a Satis schema property
+
 ## 1.14.2 - 2026-02-18
 
 ### Bug Fixes
