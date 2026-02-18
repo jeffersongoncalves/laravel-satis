@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.14.5 - 2026-02-18
+
+### Bug Fixes
+
+- **SatisConfig**: Only add `options.http.header` (Authorization) for GitHub VCS repositories. Composer-type repositories now authenticate exclusively via `auth.json` in COMPOSER_HOME, fixing HTTP 400 errors caused by duplicate/conflicting authentication
+
 ## 1.14.4 - 2026-02-18
 
 ### Bug Fixes
