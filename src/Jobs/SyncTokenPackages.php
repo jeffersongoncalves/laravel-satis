@@ -84,7 +84,7 @@ class SyncTokenPackages implements ShouldQueue
         $result = Process::timeout($this->timeout)
             ->env(['COMPOSER_HOME' => $composerHome])
             ->run([
-                'php', $satisBinary, 'build', $fullConfigPath, $fullBuildPath,
+                'php', $satisBinary, 'build', $fullConfigPath, $fullBuildPath, '--skip-errors',
             ]);
 
         if (! $result->successful()) {
