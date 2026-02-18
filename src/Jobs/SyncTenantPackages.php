@@ -88,6 +88,8 @@ class SyncTenantPackages implements ShouldQueue
                 'php', $satisBinary, 'build', $fullConfigPath, $fullBuildPath, '--skip-errors',
             ]);
 
+        $disk->delete($configPath);
+
         if (! $result->successful()) {
             Log::error('Satis build failed', [
                 'tenant_id' => $this->tenantId,

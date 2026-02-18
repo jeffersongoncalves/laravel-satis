@@ -87,6 +87,8 @@ class SyncTokenPackages implements ShouldQueue
                 'php', $satisBinary, 'build', $fullConfigPath, $fullBuildPath, '--skip-errors',
             ]);
 
+        $disk->delete($configPath);
+
         if (! $result->successful()) {
             Log::error('Satis token build failed', [
                 'token_id' => $this->token->id,
