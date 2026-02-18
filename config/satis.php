@@ -140,8 +140,8 @@ return [
     |
     */
     'auth' => [
-        'guard' => 'satis-token',
-        'provider' => 'satis-tokens',
+        'guard' => 'token',
+        'provider' => 'tokens',
     ],
 
     /*

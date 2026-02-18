@@ -6,33 +6,25 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 class PackagesController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function __invoke(Request $request): JsonResponse|Response
     {
-        $token = $request->attributes->get('satis_token');
-
-        if (! $token) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        $token = $request->user(config('satis.auth.guard'));
 
         $disk = Storage::disk(config('satis.storage_disk'));
         $storagePath = config('satis.storage_path', 'satis');
 
         $tenantPrefix = $this->getTenantPrefix($request, $token);
-        $buildPath = $storagePath.'/'.$tenantPrefix.$token->id;
-        $packagesJson = $buildPath.'/packages.json';
+        $packagesJson = $storagePath.'/'.$tenantPrefix.$token->id.'/packages.json';
 
         if (! $disk->exists($packagesJson)) {
-            return response()->json([
-                'packages' => [],
-                'notify-batch' => url(config('satis.routes.api_prefix', 'api/satis').'/composer/downloads'),
-            ]);
+            return response()->noContent(404);
         }
 
         $content = json_decode($disk->get($packagesJson), true);
-        $content['notify-batch'] = url(config('satis.routes.api_prefix', 'api/satis').'/composer/downloads');
 
         return response()->json($content);
     }

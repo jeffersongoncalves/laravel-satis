@@ -4,69 +4,33 @@ namespace JeffersonGoncalves\LaravelSatis\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
+use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserHasLicense
 {
-    public function handle(Request $request, Closure $next): mixed
+    public function handle(Request $request, Closure $next): Response
     {
-        $token = $this->resolveToken($request);
+        $token = $request->user(config('satis.auth.guard'));
+        $vendor = $request->route('vendor');
+        $package = $request->route('package');
+        $name = $vendor.'/'.$package;
 
-        if (! $token) {
-            return response()->json([
-                'error' => 'Unauthorized',
-                'message' => 'Invalid token credentials.',
-            ], Response::HTTP_UNAUTHORIZED);
+        $packageModel = ModelResolver::package();
+
+        if (! $packageModel::where('name', $name)->exists()) {
+            abort(404);
         }
 
-        if (! $this->validateTenantAccess($request, $token)) {
-            return response()->json([
-                'error' => 'Forbidden',
-                'message' => 'Token does not belong to this tenant.',
-            ], Response::HTTP_FORBIDDEN);
-        }
+        $dependencyModel = ModelResolver::dependency();
 
-        $request->attributes->set('satis_token', $token);
+        if (! $dependencyModel::where('type', DependencyType::Private)->where('name', $name)->exists()) {
+            if (! $token->packages()->where('name', $name)->exists()) {
+                abort(403);
+            }
+        }
 
         return $next($request);
-    }
-
-    protected function resolveToken(Request $request): mixed
-    {
-        $password = $request->getPassword();
-
-        if ($password) {
-            $tokenModel = ModelResolver::token();
-
-            return $tokenModel::where('token', $password)->first();
-        }
-
-        $bearerToken = $request->bearerToken();
-
-        if ($bearerToken) {
-            $tokenModel = ModelResolver::token();
-
-            return $tokenModel::where('token', $bearerToken)->first();
-        }
-
-        return null;
-    }
-
-    protected function validateTenantAccess(Request $request, $token): bool
-    {
-        if (! config('satis.tenancy.enabled')) {
-            return true;
-        }
-
-        $tenantId = $request->route('tenant');
-
-        if (! $tenantId) {
-            return true;
-        }
-
-        $fk = config('satis.tenancy.foreign_key');
-
-        return $token->{$fk} == $tenantId;
     }
 }

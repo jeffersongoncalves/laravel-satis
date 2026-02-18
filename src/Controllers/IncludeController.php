@@ -6,26 +6,22 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 class IncludeController extends Controller
 {
-    public function show(Request $request, string $include): JsonResponse
+    public function __invoke(Request $request, string $include): JsonResponse|Response
     {
-        $token = $request->attributes->get('satis_token');
-
-        if (! $token) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        $token = $request->user(config('satis.auth.guard'));
 
         $disk = Storage::disk(config('satis.storage_disk'));
         $storagePath = config('satis.storage_path', 'satis');
 
         $tenantPrefix = $this->getTenantPrefix($request, $token);
-        $buildPath = $storagePath.'/'.$tenantPrefix.$token->id;
-        $includeFile = $buildPath.'/include/'.$include.'.json';
+        $includeFile = $storagePath.'/'.$tenantPrefix.$token->id.'/include/'.$include.'.json';
 
         if (! $disk->exists($includeFile)) {
-            return response()->json(['error' => 'Include file not found'], 404);
+            return response()->noContent(404);
         }
 
         $content = json_decode($disk->get($includeFile), true);

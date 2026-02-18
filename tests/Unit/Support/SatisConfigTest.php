@@ -15,6 +15,7 @@ it('generates config with default values', function () {
 
     expect($config)->toHaveKey('name')
         ->toHaveKey('homepage')
+        ->toHaveKey('notify-batch')
         ->toHaveKey('repositories')
         ->toHaveKey('require');
 });

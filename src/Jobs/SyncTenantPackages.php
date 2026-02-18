@@ -62,9 +62,15 @@ class SyncTenantPackages implements ShouldQueue
         $tenantPrefix = $this->tenantId ? $this->tenantId.'/' : '';
         $buildPath = $storagePath.'/'.$tenantPrefix.'tenant';
 
+        $routeParams = [];
+        if ($this->tenantId && config('satis.tenancy.enabled')) {
+            $routeParams['tenant'] = $this->tenantId;
+        }
+
         $satisConfig = SatisConfig::make()
             ->setPackages($packages)
-            ->setHomepage(url(config('satis.routes.composer_prefix') ?? '/'));
+            ->setHomepage(url(config('satis.routes.composer_prefix') ?? '/'))
+            ->setNotifyBatch(route('composer.downloads', $routeParams));
 
         $configPath = $buildPath.'/satis.json';
         $disk->put($configPath, $satisConfig->toJson());

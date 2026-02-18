@@ -10,30 +10,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ArchivesController extends Controller
 {
-    public function show(Request $request, string $vendor, string $package, string $file): BinaryFileResponse|Response
+    public function __invoke(Request $request, string $vendor, string $package, string $file): BinaryFileResponse|Response
     {
-        $token = $request->attributes->get('satis_token');
-
-        if (! $token) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-
-        $packageName = $vendor.'/'.$package;
-        $hasAccess = $token->packages()->where('name', $packageName)->exists();
-
-        if (! $hasAccess) {
-            return response()->json(['error' => 'Forbidden'], 403);
-        }
+        $token = $request->user(config('satis.auth.guard'));
 
         $disk = Storage::disk(config('satis.storage_disk'));
         $storagePath = config('satis.storage_path', 'satis');
 
         $tenantPrefix = $this->getTenantPrefix($request, $token);
-        $buildPath = $storagePath.'/'.$tenantPrefix.$token->id;
-        $archivePath = $buildPath.'/archives/'.$vendor.'/'.$package.'/'.$file;
+        $archivePath = $storagePath.'/'.$tenantPrefix.$token->id.'/archives/'.$vendor.'/'.$package.'/'.$file;
 
         if (! $disk->exists($archivePath)) {
-            return response()->json(['error' => 'Archive not found'], 404);
+            return response()->noContent(404);
         }
 
         return response()->file($disk->path($archivePath));

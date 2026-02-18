@@ -10,31 +10,19 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 class DownloadComposerController extends Controller
 {
-    public function store(Request $request): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
-        $downloads = $request->input('downloads', []);
-
-        if (empty($downloads)) {
-            return response()->json(['status' => 'ok']);
-        }
-
+        $downloads = $request->get('downloads', []);
         $packageModel = ModelResolver::package();
 
         foreach ($downloads as $download) {
-            $name = $download['name'] ?? null;
-            $version = $download['version'] ?? null;
-
-            if (! $name || ! $version) {
-                continue;
-            }
-
-            $package = $packageModel::where('name', $name)->first();
+            $package = $packageModel::where('name', $download['name'] ?? null)->first();
 
             if ($package) {
-                DownloadComposerJob::dispatch($package->id, $version);
+                DownloadComposerJob::dispatch($package->id, $download['version'] ?? '*');
             }
         }
 
-        return response()->json(['status' => 'ok']);
+        return response()->json(status: 201, options: JSON_UNESCAPED_UNICODE);
     }
 }

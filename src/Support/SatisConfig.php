@@ -14,6 +14,8 @@ class SatisConfig
 
     protected ?string $homepage = null;
 
+    protected ?string $notifyBatch = null;
+
     public function __construct()
     {
         $this->config = config('satis.satis', []);
@@ -39,10 +41,18 @@ class SatisConfig
         return $this;
     }
 
+    public function setNotifyBatch(string $url): static
+    {
+        $this->notifyBatch = $url;
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         $config = $this->config;
         $config['homepage'] = $this->homepage ?? url('/');
+        $config['notify-batch'] = $this->notifyBatch ?? route('composer.downloads');
         $config['repositories'] = $this->buildRepositories();
         $config['require'] = $this->buildRequires();
 

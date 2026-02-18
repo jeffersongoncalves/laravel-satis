@@ -60,9 +60,15 @@ class SyncTokenPackages implements ShouldQueue
 
         $buildPath = $storagePath.'/'.$tenantPrefix.$this->token->id;
 
+        $routeParams = [];
+        if (config('satis.tenancy.enabled') && $tenantPrefix) {
+            $routeParams['tenant'] = rtrim($tenantPrefix, '/');
+        }
+
         $satisConfig = SatisConfig::make()
             ->setPackages($packages)
-            ->setHomepage(url(config('satis.routes.composer_prefix') ?? '/'));
+            ->setHomepage(url(config('satis.routes.composer_prefix') ?? '/'))
+            ->setNotifyBatch(route('composer.downloads', $routeParams));
 
         $configPath = $buildPath.'/satis.json';
         $disk->put($configPath, $satisConfig->toJson());
