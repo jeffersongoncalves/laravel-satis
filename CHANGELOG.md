@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.14.6 - 2026-02-18
+
+### Bug Fixes
+
+- **SyncTenantPackages / SyncTokenPackages**: Delete generated `satis.json` config file after build completes, preventing credential leakage on disk
+
 ## 1.14.5 - 2026-02-18
 
 ### Bug Fixes
