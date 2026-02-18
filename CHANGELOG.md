@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.14.4 - 2026-02-18
+
+### Bug Fixes
+
+- **SyncTenantPackages / SyncTokenPackages**: Add missing `--skip-errors` flag to satis build commands, allowing builds to continue past individual package errors
+
 ## 1.14.3 - 2026-02-18
 
 ### Bug Fixes
