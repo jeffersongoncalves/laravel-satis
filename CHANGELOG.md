@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.15.0 - 2026-02-18
+
+### Changes
+
+- **ProcessPackageDependency**: Restored original per-package behavior — now accepts a `Package` model and reads releases from the Composer cache directory (`provider-*.json` or `packages.json`) instead of the Satis build output
+- Cache path is tenant-aware: `satis/{tenantPrefix}composer/cache/repo/{folder}/`
+- **SyncTenantPackages / SyncTokenPackages**: Dispatch `ProcessPackageDependency` per package after successful build
+- **DependencyPackages command**: Dispatches job per package, shows count in output
+
 ## 1.14.8 - 2026-02-18
 
 ### Bug Fixes
