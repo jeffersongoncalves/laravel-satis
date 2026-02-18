@@ -95,7 +95,9 @@ return [
             'skip-dev' => true,
         ],
         'minimum-stability' => 'stable',
-        'secure-http' => false,
+        'config' => [
+            'secure-http' => false,
+        ],
     ],
 
     /*
