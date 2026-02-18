@@ -72,7 +72,7 @@ class SatisConfig
                 'url' => $package->url,
             ];
 
-            if ($package->username && $package->password) {
+            if ($package->type === PackageType::Github && $package->username && $package->password) {
                 $repo['options'] = [
                     'http' => [
                         'header' => [
