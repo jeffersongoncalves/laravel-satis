@@ -12,6 +12,7 @@ class EnsureUserHasLicense
 {
     public function handle(Request $request, Closure $next): Response
     {
+        /** @var \JeffersonGoncalves\LaravelSatis\Models\Token $token */
         $token = $request->user(config('satis.auth.guard'));
         $vendor = $request->route('vendor');
         $package = $request->route('package');

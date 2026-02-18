@@ -66,7 +66,29 @@ it('maps github type to vcs', function () {
     expect($config['repositories'][0]['type'])->toBe('vcs');
 });
 
-it('includes basic auth when credentials are set', function () {
+it('includes basic auth options for github packages with credentials', function () {
+    $packages = collect([
+        Package::factory()->make([
+            'name' => 'vendor/package-a',
+            'type' => PackageType::Github,
+            'url' => 'https://github.com/vendor/package-a.git',
+            'username' => 'user',
+            'password' => 'pass',
+        ]),
+    ]);
+
+    $config = SatisConfig::make()
+        ->setPackages($packages)
+        ->toArray();
+
+    $repo = $config['repositories'][0];
+
+    expect($repo)->toHaveKey('options')
+        ->and($repo['options']['http']['header'][0])
+        ->toBe('Authorization: Basic '.base64_encode('user:pass'));
+});
+
+it('does not include options for composer packages with credentials', function () {
     $packages = collect([
         Package::factory()->make([
             'name' => 'vendor/package-a',
@@ -83,9 +105,7 @@ it('includes basic auth when credentials are set', function () {
 
     $repo = $config['repositories'][0];
 
-    expect($repo)->toHaveKey('options')
-        ->and($repo['options']['http']['header'][0])
-        ->toBe('Authorization: Basic '.base64_encode('user:pass'));
+    expect($repo)->not->toHaveKey('options');
 });
 
 it('builds require list from packages', function () {
