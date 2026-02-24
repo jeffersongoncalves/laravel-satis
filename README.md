@@ -1,3 +1,9 @@
+<div class="filament-hidden">
+
+![Laravel Satis](https://raw.githubusercontent.com/jeffersongoncalves/laravel-satis/main/art/jeffersongoncalves-laravel-satis.png)
+
+</div>
+
 # Laravel Satis
 
 A Laravel package for managing private Composer repositories powered by [Satis](https://github.com/composer/satis).
