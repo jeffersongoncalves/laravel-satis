@@ -3,6 +3,7 @@
 namespace JeffersonGoncalves\LaravelSatis\Observers;
 
 use JeffersonGoncalves\LaravelSatis\Enums\PackageType;
+use JeffersonGoncalves\LaravelSatis\Jobs\SyncTokenPackages;
 use JeffersonGoncalves\LaravelSatis\Jobs\ValidatePackageCredentialsJob;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
 
@@ -26,6 +27,12 @@ class PackageObserver
 
     public function updated(Package $package): void
     {
+        if ($package->isDirty('is_credentials_validated') && $package->is_credentials_validated) {
+            $package->tokens->each(function ($token) {
+                SyncTokenPackages::dispatch($token);
+            });
+        }
+
         if ($package->isDirty(['username', 'password', 'url'])) {
             $package->updateQuietly([
                 'is_credentials_validated' => false,

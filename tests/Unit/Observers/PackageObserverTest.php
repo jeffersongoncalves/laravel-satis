@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Bus;
+use JeffersonGoncalves\LaravelSatis\Jobs\SyncTokenPackages;
 use JeffersonGoncalves\LaravelSatis\Jobs\ValidatePackageCredentialsJob;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
+use JeffersonGoncalves\LaravelSatis\Models\Token;
 
 it('generates webhook_secret on creation when github type and empty', function () {
     $package = Package::factory()->github()->create(['webhook_secret' => null]);
@@ -70,4 +72,38 @@ it('clears credentials validation when password changes', function () {
     $package->refresh();
 
     expect($package->is_credentials_validated)->toBeFalse();
+});
+
+it('dispatches SyncTokenPackages for linked tokens when credentials are validated', function () {
+    Bus::fake();
+
+    $package = Package::factory()->create();
+    $token = Token::factory()->create();
+    $package->tokens()->attach($token);
+
+    Bus::assertDispatchedTimes(SyncTokenPackages::class, 1);
+
+    $package->update([
+        'is_credentials_validated' => true,
+        'credentials_validated_at' => now(),
+    ]);
+
+    Bus::assertDispatchedTimes(SyncTokenPackages::class, 2);
+});
+
+it('does not dispatch SyncTokenPackages when credentials validation is set to false', function () {
+    Bus::fake();
+
+    $package = Package::factory()->validated()->create();
+    $token = Token::factory()->create();
+    $package->tokens()->attach($token);
+
+    Bus::assertDispatchedTimes(SyncTokenPackages::class, 1);
+
+    $package->update([
+        'is_credentials_validated' => false,
+        'credentials_validated_at' => null,
+    ]);
+
+    Bus::assertDispatchedTimes(SyncTokenPackages::class, 1);
 });
