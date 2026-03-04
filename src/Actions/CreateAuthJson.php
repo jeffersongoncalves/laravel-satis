@@ -20,12 +20,23 @@ class CreateAuthJson
 
         $authJson = ['http-basic' => []];
 
-        $packages
+        $composerPackages = $packages
             ->filter(fn ($package) => $package->type === PackageType::Composer)
-            ->each(function ($package) use (&$authJson) {
-                $host = parse_url($package->url, PHP_URL_HOST);
+            ->filter(fn ($package) => $package->username && $package->password);
 
-                if ($host && $package->username && $package->password) {
+        $composerPackages
+            ->groupBy(fn ($package) => parse_url($package->url, PHP_URL_HOST))
+            ->each(function ($hostPackages, $host) use (&$authJson) {
+                if (! $host) {
+                    return;
+                }
+
+                // Only add to http-basic when all packages on this host share the same credentials.
+                // When credentials differ, each package already has its own Authorization header in satis.json.
+                $uniqueCredentials = $hostPackages->unique(fn ($p) => $p->username.':'.$p->password);
+
+                if ($uniqueCredentials->count() === 1) {
+                    $package = $hostPackages->first();
                     $authJson['http-basic'][$host] = [
                         'username' => $package->username,
                         'password' => $package->password,

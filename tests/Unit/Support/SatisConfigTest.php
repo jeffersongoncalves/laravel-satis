@@ -88,7 +88,7 @@ it('includes basic auth options for github packages with credentials', function 
         ->toBe('Authorization: Basic '.base64_encode('user:pass'));
 });
 
-it('does not include options for composer packages with credentials', function () {
+it('includes basic auth options for composer packages with credentials', function () {
     $packages = collect([
         Package::factory()->make([
             'name' => 'vendor/package-a',
@@ -105,7 +105,9 @@ it('does not include options for composer packages with credentials', function (
 
     $repo = $config['repositories'][0];
 
-    expect($repo)->not->toHaveKey('options');
+    expect($repo)->toHaveKey('options')
+        ->and($repo['options']['http']['header'][0])
+        ->toBe('Authorization: Basic '.base64_encode('user:pass'));
 });
 
 it('builds require list from packages', function () {
