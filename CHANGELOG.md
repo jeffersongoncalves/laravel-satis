@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.17.0 - 2026-03-03
+
+### Added
+
+- Support per-package credentials for same-domain repositories. Multiple packages from the same host (e.g. `packages.filamentphp.com`) can now use different credentials. Authorization headers are embedded directly in each repository's satis.json config, and `auth.json` only includes `http-basic` entries when all packages on a host share the same credentials.
+
 ## 1.16.0 - 2026-02-28
 
 **Full Changelog**: https://github.com/jeffersongoncalves/laravel-satis/compare/1.15.0...1.16.0
