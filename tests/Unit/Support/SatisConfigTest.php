@@ -88,7 +88,7 @@ it('includes basic auth options for github packages with credentials', function 
         ->toBe('Authorization: Basic '.base64_encode('user:pass'));
 });
 
-it('includes basic auth options for composer packages with credentials', function () {
+it('does not add auth options for composer packages without credential conflicts (auth.json handles it)', function () {
     $packages = collect([
         Package::factory()->make([
             'name' => 'vendor/package-a',
@@ -105,9 +105,9 @@ it('includes basic auth options for composer packages with credentials', functio
 
     $repo = $config['repositories'][0];
 
-    expect($repo)->toHaveKey('options')
-        ->and($repo['options']['http']['header'][0])
-        ->toBe('Authorization: Basic '.base64_encode('user:pass'));
+    // Composer packages without credential conflicts rely on auth.json http-basic.
+    // Adding Authorization headers would cause duplicate authentication (HTTP 400).
+    expect($repo)->not->toHaveKey('options');
 });
 
 it('builds require list from packages', function () {
@@ -192,7 +192,8 @@ it('deduplicates repos when same url and same credentials', function () {
         ->toArray();
 
     expect($config['repositories'])->toHaveCount(1)
-        ->and($config['repositories'][0]['url'])->toBe('https://packages.example.com');
+        ->and($config['repositories'][0]['url'])->toBe('https://packages.example.com')
+        ->and($config['repositories'][0])->not->toHaveKey('options');
 
     expect($config['require'])->toBe([
         'vendor/package-a' => '*',

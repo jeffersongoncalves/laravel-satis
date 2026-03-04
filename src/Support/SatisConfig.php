@@ -66,14 +66,16 @@ class SatisConfig
 
     protected function buildRepositories(): array
     {
-        // Track credentials per URL to make duplicate URLs with different
-        // credentials unique. Composer caches HTTP responses and deduplicates
-        // repositories by URL, so packages on the same URL with different
-        // credentials would all use the first credential's cached response.
+        // Detect Composer hostnames with credential conflicts (matching CreateAuthJson logic).
+        // When all Composer packages on a hostname share the same credentials,
+        // auth.json handles authentication via http-basic. When credentials differ,
+        // auth.json skips the host and we use per-repository Authorization headers.
+        $conflictedHosts = $this->detectConflictedHosts();
+
         $urlCredentials = [];
         $seen = [];
 
-        return $this->packages->map(function (Package $package) use (&$urlCredentials, &$seen) {
+        return $this->packages->map(function (Package $package) use (&$urlCredentials, &$seen, $conflictedHosts) {
             $type = $this->resolveRepositoryType($package);
             $url = $package->url;
 
@@ -83,34 +85,46 @@ class SatisConfig
             ];
 
             if ($package->username && $package->password) {
-                $normalizedUrl = rtrim($url, '/');
-                $mapKey = $type.':'.$normalizedUrl;
-                $credentialHash = md5($package->username.':'.$package->password);
+                // VCS/GitHub packages always need Authorization headers since
+                // auth.json http-basic only covers Composer-type packages.
+                // Composer packages only need headers when the hostname has
+                // credential conflicts (auth.json skips conflicted hosts).
+                $host = parse_url($url, PHP_URL_HOST);
+                $isVcs = $type !== 'composer';
+                $hasConflict = isset($conflictedHosts[$host]);
 
-                if (! isset($urlCredentials[$mapKey])) {
-                    $urlCredentials[$mapKey] = [];
-                }
+                if ($isVcs || $hasConflict) {
+                    if ($hasConflict) {
+                        $normalizedUrl = rtrim($url, '/');
+                        $mapKey = $type.':'.$normalizedUrl;
+                        $credentialHash = md5($package->username.':'.$package->password);
 
-                if (! isset($urlCredentials[$mapKey][$credentialHash])) {
-                    $urlCredentials[$mapKey][$credentialHash] = count($urlCredentials[$mapKey]);
-                }
+                        if (! isset($urlCredentials[$mapKey])) {
+                            $urlCredentials[$mapKey] = [];
+                        }
 
-                $suffixIndex = $urlCredentials[$mapKey][$credentialHash];
+                        if (! isset($urlCredentials[$mapKey][$credentialHash])) {
+                            $urlCredentials[$mapKey][$credentialHash] = count($urlCredentials[$mapKey]);
+                        }
 
-                if ($suffixIndex > 0) {
-                    $repo['url'] = $normalizedUrl.str_repeat('/.', $suffixIndex);
-                }
+                        $suffixIndex = $urlCredentials[$mapKey][$credentialHash];
 
-                $repo['options'] = [
-                    'http' => [
-                        'header' => [
-                            'Authorization: Basic '.base64_encode($package->username.':'.$package->password),
+                        if ($suffixIndex > 0) {
+                            $repo['url'] = $normalizedUrl.str_repeat('/.', $suffixIndex);
+                        }
+                    }
+
+                    $repo['options'] = [
+                        'http' => [
+                            'header' => [
+                                'Authorization: Basic '.base64_encode($package->username.':'.$package->password),
+                            ],
                         ],
-                    ],
-                ];
+                    ];
+                }
             }
 
-            // Deduplicate: same URL + same credentials only needs one repo entry.
+            // Deduplicate: same URL + same type only needs one repo entry.
             $dedupeKey = $type.':'.$repo['url'];
             if (isset($seen[$dedupeKey])) {
                 return null;
@@ -119,6 +133,35 @@ class SatisConfig
 
             return $repo;
         })->filter()->values()->toArray();
+    }
+
+    /**
+     * Detect Composer hostnames that have multiple different credential sets.
+     *
+     * @return array<string, true>
+     */
+    protected function detectConflictedHosts(): array
+    {
+        $hostCredentials = [];
+
+        foreach ($this->packages as $package) {
+            if ($package->type === PackageType::Composer && $package->username && $package->password) {
+                $host = parse_url($package->url, PHP_URL_HOST);
+                if ($host) {
+                    $hostCredentials[$host][md5($package->username.':'.$package->password)] = true;
+                }
+            }
+        }
+
+        $conflicted = [];
+
+        foreach ($hostCredentials as $host => $creds) {
+            if (count($creds) > 1) {
+                $conflicted[$host] = true;
+            }
+        }
+
+        return $conflicted;
     }
 
     protected function buildRequires(): array
