@@ -132,3 +132,136 @@ it('converts to JSON', function () {
     expect($json)->toBeString()
         ->and(json_decode($json, true))->toBeArray();
 });
+
+it('makes URLs unique for same-url packages with different credentials', function () {
+    $packages = collect([
+        Package::factory()->make([
+            'name' => 'vendor/package-a',
+            'type' => PackageType::Composer,
+            'url' => 'https://packages.example.com',
+            'username' => 'license-1',
+            'password' => 'secret-1',
+        ]),
+        Package::factory()->make([
+            'name' => 'vendor/package-b',
+            'type' => PackageType::Composer,
+            'url' => 'https://packages.example.com',
+            'username' => 'license-2',
+            'password' => 'secret-2',
+        ]),
+    ]);
+
+    $config = SatisConfig::make()
+        ->setPackages($packages)
+        ->toArray();
+
+    expect($config['repositories'])->toHaveCount(2)
+        ->and($config['repositories'][0]['url'])->toBe('https://packages.example.com')
+        ->and($config['repositories'][1]['url'])->toBe('https://packages.example.com/.')
+        ->and($config['repositories'][0]['options']['http']['header'][0])
+        ->toBe('Authorization: Basic '.base64_encode('license-1:secret-1'))
+        ->and($config['repositories'][1]['options']['http']['header'][0])
+        ->toBe('Authorization: Basic '.base64_encode('license-2:secret-2'));
+
+    expect($config['require'])->toBe([
+        'vendor/package-a' => '*',
+        'vendor/package-b' => '*',
+    ]);
+});
+
+it('deduplicates repos when same url and same credentials', function () {
+    $packages = collect([
+        Package::factory()->make([
+            'name' => 'vendor/package-a',
+            'type' => PackageType::Composer,
+            'url' => 'https://packages.example.com',
+            'username' => 'user',
+            'password' => 'pass',
+        ]),
+        Package::factory()->make([
+            'name' => 'vendor/package-b',
+            'type' => PackageType::Composer,
+            'url' => 'https://packages.example.com',
+            'username' => 'user',
+            'password' => 'pass',
+        ]),
+    ]);
+
+    $config = SatisConfig::make()
+        ->setPackages($packages)
+        ->toArray();
+
+    expect($config['repositories'])->toHaveCount(1)
+        ->and($config['repositories'][0]['url'])->toBe('https://packages.example.com');
+
+    expect($config['require'])->toBe([
+        'vendor/package-a' => '*',
+        'vendor/package-b' => '*',
+    ]);
+});
+
+it('handles three credential sets on same url', function () {
+    $packages = collect([
+        Package::factory()->make([
+            'name' => 'vendor/package-a',
+            'type' => PackageType::Composer,
+            'url' => 'https://packages.example.com',
+            'username' => 'user-1',
+            'password' => 'pass-1',
+        ]),
+        Package::factory()->make([
+            'name' => 'vendor/package-b',
+            'type' => PackageType::Composer,
+            'url' => 'https://packages.example.com',
+            'username' => 'user-2',
+            'password' => 'pass-2',
+        ]),
+        Package::factory()->make([
+            'name' => 'vendor/package-c',
+            'type' => PackageType::Composer,
+            'url' => 'https://packages.example.com',
+            'username' => 'user-3',
+            'password' => 'pass-3',
+        ]),
+    ]);
+
+    $config = SatisConfig::make()
+        ->setPackages($packages)
+        ->toArray();
+
+    expect($config['repositories'])->toHaveCount(3)
+        ->and($config['repositories'][0]['url'])->toBe('https://packages.example.com')
+        ->and($config['repositories'][1]['url'])->toBe('https://packages.example.com/.')
+        ->and($config['repositories'][2]['url'])->toBe('https://packages.example.com/./.');
+});
+
+it('deduplicates repos without credentials sharing same url', function () {
+    $packages = collect([
+        Package::factory()->make([
+            'name' => 'vendor/package-a',
+            'type' => PackageType::Composer,
+            'url' => 'https://repo.example.com',
+            'username' => null,
+            'password' => null,
+        ]),
+        Package::factory()->make([
+            'name' => 'vendor/package-b',
+            'type' => PackageType::Composer,
+            'url' => 'https://repo.example.com',
+            'username' => null,
+            'password' => null,
+        ]),
+    ]);
+
+    $config = SatisConfig::make()
+        ->setPackages($packages)
+        ->toArray();
+
+    expect($config['repositories'])->toHaveCount(1)
+        ->and($config['repositories'][0]['url'])->toBe('https://repo.example.com');
+
+    expect($config['require'])->toBe([
+        'vendor/package-a' => '*',
+        'vendor/package-b' => '*',
+    ]);
+});

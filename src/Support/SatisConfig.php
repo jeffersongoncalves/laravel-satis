@@ -66,13 +66,41 @@ class SatisConfig
 
     protected function buildRepositories(): array
     {
-        return $this->packages->map(function (Package $package) {
+        // Track credentials per URL to make duplicate URLs with different
+        // credentials unique. Composer caches HTTP responses and deduplicates
+        // repositories by URL, so packages on the same URL with different
+        // credentials would all use the first credential's cached response.
+        $urlCredentials = [];
+        $seen = [];
+
+        return $this->packages->map(function (Package $package) use (&$urlCredentials, &$seen) {
+            $type = $this->resolveRepositoryType($package);
+            $url = $package->url;
+
             $repo = [
-                'type' => $this->resolveRepositoryType($package),
-                'url' => $package->url,
+                'type' => $type,
+                'url' => $url,
             ];
 
             if ($package->username && $package->password) {
+                $normalizedUrl = rtrim($url, '/');
+                $mapKey = $type.':'.$normalizedUrl;
+                $credentialHash = md5($package->username.':'.$package->password);
+
+                if (! isset($urlCredentials[$mapKey])) {
+                    $urlCredentials[$mapKey] = [];
+                }
+
+                if (! isset($urlCredentials[$mapKey][$credentialHash])) {
+                    $urlCredentials[$mapKey][$credentialHash] = count($urlCredentials[$mapKey]);
+                }
+
+                $suffixIndex = $urlCredentials[$mapKey][$credentialHash];
+
+                if ($suffixIndex > 0) {
+                    $repo['url'] = $normalizedUrl.str_repeat('/.', $suffixIndex);
+                }
+
                 $repo['options'] = [
                     'http' => [
                         'header' => [
@@ -82,8 +110,15 @@ class SatisConfig
                 ];
             }
 
+            // Deduplicate: same URL + same credentials only needs one repo entry.
+            $dedupeKey = $type.':'.$repo['url'];
+            if (isset($seen[$dedupeKey])) {
+                return null;
+            }
+            $seen[$dedupeKey] = true;
+
             return $repo;
-        })->values()->toArray();
+        })->filter()->values()->toArray();
     }
 
     protected function buildRequires(): array
