@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.17.1 - 2026-03-04
+
+### What's Changed
+
+#### Bug Fixes
+
+* **fix: resolve build failure for same-URL packages with different credentials** - Composer caches HTTP responses and deduplicates repositories by URL, so when multiple packages share the same repository URL but use different credentials (e.g., different licenses on the same registry), only the first credential set was used. Now each unique credential set gets a unique URL suffix that HTTP servers normalize away, preventing cache collisions. Same-URL packages with identical credentials are also deduplicated into a single repository entry.
+
+**Full Changelog**: https://github.com/jeffersongoncalves/laravel-satis/compare/1.17.0...1.17.1
+
 ## 1.17.0 - 2026-03-03
 
 ### Added
