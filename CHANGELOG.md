@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.17.2 - 2026-03-04
+
+### What's Changed
+
+#### Bug Fixes
+
+* **fix: prevent duplicate authentication causing HTTP 400 on same-host packages** - The Authorization header was being added to ALL packages with credentials in satis.json, while auth.json also provided http-basic for the same hosts. This dual authentication caused HTTP 400 errors from servers rejecting duplicate credentials (e.g., `satis.filamentexamples.com`, `composer.fluxui.dev`).
+  
+  Now Authorization headers are only added when necessary:
+  
+  - **VCS/GitHub packages**: always (auth.json does not cover VCS)
+  - **Composer packages with credential conflicts on the same host**: always (auth.json skips conflicted hosts)
+  - **Composer packages without conflicts**: never (auth.json handles it)
+  
+
+**Full Changelog**: https://github.com/jeffersongoncalves/laravel-satis/compare/1.17.1...1.17.2
+
 ## 1.17.1 - 2026-03-04
 
 ### What's Changed
