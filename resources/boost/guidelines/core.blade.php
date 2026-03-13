@@ -1,23 +1,25 @@
 ## Laravel Satis
 
-This package provides private Composer repository management using Satis with token-based authentication, multi-tenancy support, and dependency tracking.
+This package provides private Composer repository management using Satis with token-based authentication, credential management, multi-tenancy support, and dependency tracking.
 
 ### Key Concepts
 
-- **Packages**: Composer or GitHub VCS repositories registered for private hosting.
+- **Credentials**: Centralized authentication (URL, email, password) for accessing private repositories.
+- **Packages**: Composer or GitHub VCS repositories linked to credentials for private hosting.
 - **Tokens**: Authentication credentials (64-char strings) granting access to specific packages.
 - **Releases**: Package versions parsed from Satis builds with dependency tracking.
-- **Multi-Tenancy**: Optional tenant isolation for packages, tokens, and builds.
+- **Multi-Tenancy**: Optional tenant isolation for credentials, packages, tokens, and builds.
 
 ### Models & Relationships
 
-- `Package` hasMany `PackageRelease`, hasMany `PackageDownload`, belongsToMany `Token`
+- `Credential` hasMany `Package` (stores url, email, password)
+- `Package` belongsTo `Credential`, hasMany `PackageRelease`, hasMany `PackageDownload`, belongsToMany `Token`
 - `Token` belongsToMany `Package` (implements `Authenticatable`)
 - `PackageRelease` belongsTo `Package`, belongsToMany `Dependency`
 - `Dependency` belongsToMany `PackageRelease`
 - `Packagist` stores public package lookup data
 
-All models use `ModelResolver` for class resolution — always use `ModelResolver::package()` instead of hardcoding model classes.
+All models use `ModelResolver` for class resolution — always use `ModelResolver::credential()`, `ModelResolver::package()` etc. instead of hardcoding model classes.
 
 ### Configuration
 
@@ -32,12 +34,15 @@ Key options:
 - `satis` — Base Satis configuration (name, archive settings, stability, secure_http)
 - `auth.guard` / `auth.provider` — Guard and provider for token authentication
 - `routes.api_prefix` / `routes.composer_prefix` — Route prefixes
-- `models.*` — Override default model classes
+- `models.*` — Override default model classes (credential, package, token, etc.)
 
 ### Artisan Commands
 
 - `satis:build` — Build Satis repository (dispatches `SyncTenantPackages` job)
+- `satis:token-build` — Build Satis repository per token
 - `satis:validate` — Validate builds and package credentials
+- `satis:sanitize` — Remove credentials from Satis JSON files
+- `satis:clean` — Clean all Satis builds from storage
 - `dependency:packages` — Process and sync package dependencies
 
 ### Authentication
@@ -61,6 +66,15 @@ API routes (prefix: `api/satis`):
 - `POST composer/downloads` — Record download statistics
 - `POST webhooks/github/{package:reference}` — GitHub webhook handler
 
+### Build Process
+
+Builds are grouped by credential for separate Satis runs:
+1. Packages grouped by `credential_id`
+2. Each group gets a separate `satis.json` with inline auth URLs (RFC 3986)
+3. Retry with exponential backoff on rate-limiting (HTTP 429)
+4. Snapshots merged via `MergeSatisPackagesJson` action
+5. Output sanitized to remove inline credentials
+
 ### Conventions
 
 - Use `ModelResolver` to reference models (allows custom overrides).
@@ -68,3 +82,4 @@ API routes (prefix: `api/satis`):
 - Observers handle cache invalidation and auto-generation of tokens/secrets.
 - The `HasTenancy` trait auto-scopes queries and sets tenant FK on creation.
 - The `GenerateCode` trait provides static helpers for generating tokens, secrets, and references.
+- Packages require a `credential_id` FK — credentials are never stored directly on packages.
