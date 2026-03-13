@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.0.0 - 2026-03-13
+
+### Breaking Changes
+
+- **Credential model**: Credentials (url, email, password) extracted from `Package` to new dedicated `Credential` model
+- **Package model**: Removed `url`, `username`, `password` columns — replaced by `credential_id` FK (required)
+- **CreateAuthJson removed**: Replaced by inline auth URLs (RFC 3986)
+- **Code lengths**: `webhook_secret` changed from 40 to 64 chars, `reference` from 20 to 32 chars
+- **SatisConfig**: Refactored to fluent builder implementing `Stringable`
+
+### New Features
+
+- `Credential` model with contract, factory, HasTenancy, and display_name accessor
+- `ValidateCredential` action for standalone credential validation
+- `MergeSatisPackagesJson` action for merging multi-credential build snapshots
+- `PackageData` and `RepositoryData` DTOs
+- Builds grouped by credential for separate satis runs
+- Inline auth URLs (RFC 3986 percent-encoded) instead of auth.json
+- Retry with exponential backoff on rate-limiting (HTTP 429)
+- Sanitization of inline credentials from URLs in output
+- SatisConfig fluent API: `httpBasic()`, `repository()`, `require()`, `outputDir()`
+
+### Migration Guide
+
+See the upgrade guide in the repository for migrating from v1.x to v2.0.
+
 ## 1.17.2 - 2026-03-04
 
 ### What's Changed
