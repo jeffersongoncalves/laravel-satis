@@ -10,23 +10,26 @@ A Laravel package for managing private Composer repositories powered by [Satis](
 
 ## Features
 
-- **Package Management** — Add and manage Composer & GitHub package sources
+- **Credential Management** — Dedicated Credential model for centralized authentication (URL, email, password)
+- **Package Management** — Add and manage Composer & GitHub package sources linked to credentials
 - **Token-Based Auth** — Secure access with per-token package scoping
 - **Automated Builds** — Queue-driven Satis builds with configurable scheduling
+- **Credential Grouping** — Separate builds per credential with snapshot merging
+- **Inline Auth URLs** — RFC 3986 percent-encoded credentials in repository URLs
+- **Rate-Limit Retry** — Exponential backoff on HTTP 429 responses during builds
 - **GitHub Webhooks** — Auto-rebuild on push, release and create events with signature verification
 - **Download Tracking** — Per-version download statistics
 - **Dependency Tracking** — Public/private dependency classification with automatic processing
 - **Multi-Tenancy** — Tenant-isolated data with configurable resolver
-- **Credential Validation** — Verify package accessibility before building
+- **Credential Validation** — Verify package and credential accessibility before building
 - **Intelligent Validation** — Timestamp-based comparison to skip unnecessary rebuilds
-- **Auth.json Support** — Automatic auth.json generation for authenticated Composer builds
-- **Credential Sanitization** — Remove transport-options from Satis JSON files to prevent credential leaks
+- **Credential Sanitization** — Remove transport-options and inline credentials from Satis JSON files
 - **Dev Packages** — Mark packages as development-only with `is_dev` flag
 - **Composer V2 Protocol** — Full support for `packages.json`, `p2/` and include files
 
 ## Requirements
 
-- PHP 8.1+
+- PHP 8.2+
 - Laravel 10+
 - Satis (`composer/satis` — included as dependency)
 
@@ -89,6 +92,7 @@ Override any model to extend the default behavior:
 
 ```php
 'models' => [
+    'credential' => \App\Models\SatisCredential::class,
     'package' => \App\Models\SatisPackage::class,
     'token' => \App\Models\SatisToken::class,
     // ...
@@ -136,37 +140,54 @@ Override any model to extend the default behavior:
 
 ## Usage
 
-### Managing Packages Programmatically
+### Managing Credentials and Packages Programmatically
 
 ```php
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
-// Create a package
+// Create a credential
+$credentialModel = ModelResolver::credential();
+$credential = $credentialModel::create([
+    'name' => 'My Private Repo',
+    'url' => 'https://repo.example.com',
+    'email' => 'user',
+    'password' => 'secret',
+]);
+
+// Create a package using the credential
 $packageModel = ModelResolver::package();
 $package = $packageModel::create([
     'name' => 'vendor/package-name',
     'type' => 'composer',
-    'url' => 'https://repo.example.com',
-    'username' => 'user',
-    'password' => 'secret',
+    'credential_id' => $credential->id,
 ]);
 
-// Create a GitHub package
-$githubPackage = $packageModel::create([
-    'name' => 'vendor/github-package',
-    'type' => 'github',
+// Create a GitHub credential and package
+$githubCredential = $credentialModel::create([
+    'name' => 'GitHub',
     'url' => 'https://github.com/vendor/repo.git',
-    'username' => 'github-user',
+    'email' => 'github-user',
     'password' => 'github-token',
 ]);
 
-// Create a dev package
+$githubPackage = $packageModel::create([
+    'name' => 'vendor/github-package',
+    'type' => 'github',
+    'credential_id' => $githubCredential->id,
+]);
+
+// Create a dev package (reusing same credential)
 $devPackage = $packageModel::create([
     'name' => 'vendor/dev-tool',
     'type' => 'composer',
-    'url' => 'https://repo.example.com',
+    'credential_id' => $credential->id,
     'is_dev' => true,
 ]);
+
+// Validate a credential
+$result = app(\JeffersonGoncalves\LaravelSatis\Actions\ValidateCredential::class)
+    ->execute($credential);
+// $result = ['success' => true, 'message' => 'Credential validated successfully.']
 
 // Create a token
 $tokenModel = ModelResolver::token();
@@ -278,6 +299,73 @@ The webhook handler:
 | `satis:clean` | Clean all Satis builds from storage |
 | `satis:sanitize` | Remove credentials from Satis JSON files |
 | `dependency:packages` | Process and sync package dependencies |
+
+## Upgrading from v1.x to v2.0
+
+### Breaking Changes
+
+1. **Credential model**: Credentials are now stored in a dedicated `credentials` table instead of directly on the `packages` table.
+
+2. **Package model**: The `url`, `username`, and `password` columns have been removed. Packages now reference a `credential_id` foreign key (required).
+
+3. **CreateAuthJson removed**: Authentication is now handled via inline auth URLs (RFC 3986) instead of a separate auth.json file.
+
+4. **Code lengths**: `webhook_secret` changed from 40 to 64 characters, `reference` from 20 to 32 characters.
+
+### Migration Steps
+
+1. Update your dependency:
+
+```bash
+composer require jeffersongoncalves/laravel-satis:^2.0
+```
+
+2. Publish and run the new migrations:
+
+```bash
+php artisan vendor:publish --tag="satis-migrations"
+```
+
+3. **Before running migrations**, migrate existing data to the credentials table:
+
+```php
+use JeffersonGoncalves\LaravelSatis\Models\Credential;
+
+$packages = DB::table('satis_packages')->get();
+$credentialMap = [];
+
+foreach ($packages as $package) {
+    $key = $package->url . '|' . $package->username;
+
+    if (! isset($credentialMap[$key])) {
+        $credential = Credential::create([
+            'name' => parse_url($package->url, PHP_URL_HOST) ?? $package->url,
+            'url' => $package->url,
+            'email' => $package->username,
+            'password' => $package->password,
+            'is_validated' => $package->is_credentials_validated,
+            'validated_at' => $package->credentials_validated_at,
+        ]);
+        $credentialMap[$key] = $credential->id;
+    }
+
+    DB::table('satis_packages')
+        ->where('id', $package->id)
+        ->update(['credential_id' => $credentialMap[$key]]);
+}
+```
+
+4. Run migrations:
+
+```bash
+php artisan migrate
+```
+
+5. Update code references:
+   - `$package->url` → `$package->credential->url`
+   - `$package->username` → `$package->credential->email`
+   - `$package->password` → `$package->credential->password`
+   - `CreateAuthJson` → removed, no longer needed
 
 ## License
 
