@@ -33,7 +33,7 @@ class PackageObserver
             });
         }
 
-        if ($package->isDirty(['username', 'password', 'url'])) {
+        if ($package->isDirty(['credential_id'])) {
             $package->updateQuietly([
                 'is_credentials_validated' => false,
                 'credentials_validated_at' => null,

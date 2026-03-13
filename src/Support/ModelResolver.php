@@ -3,6 +3,7 @@
 namespace JeffersonGoncalves\LaravelSatis\Support;
 
 use InvalidArgumentException;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\CredentialContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\DependencyContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\DependencyPackageReleaseContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageContract;
@@ -16,6 +17,11 @@ class ModelResolver
 {
     /** @var array<string, string> */
     protected static array $cache = [];
+
+    public static function credential(): string
+    {
+        return static::resolve('credential', CredentialContract::class);
+    }
 
     public static function package(): string
     {

@@ -1,5 +1,6 @@
 <?php
 
+use JeffersonGoncalves\LaravelSatis\Models\Credential;
 use JeffersonGoncalves\LaravelSatis\Models\Dependency;
 use JeffersonGoncalves\LaravelSatis\Models\DependencyPackageRelease;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
@@ -12,6 +13,10 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 beforeEach(function () {
     ModelResolver::flushCache();
+});
+
+it('resolves the credential model', function () {
+    expect(ModelResolver::credential())->toBe(Credential::class);
 });
 
 it('resolves the package model', function () {

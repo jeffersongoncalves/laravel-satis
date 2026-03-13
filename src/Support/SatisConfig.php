@@ -3,23 +3,34 @@
 namespace JeffersonGoncalves\LaravelSatis\Support;
 
 use Illuminate\Support\Collection;
+use JeffersonGoncalves\LaravelSatis\Data\PackageData;
+use JeffersonGoncalves\LaravelSatis\Data\RepositoryData;
 use JeffersonGoncalves\LaravelSatis\Enums\PackageType;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
+use Stringable;
 
-class SatisConfig
+class SatisConfig implements Stringable
 {
-    protected array $config;
+    protected array $config = [];
 
-    protected Collection $packages;
+    protected array $repositories = [];
+
+    protected array $requires = [];
+
+    protected array $httpBasic = [];
 
     protected ?string $homepage = null;
 
     protected ?string $notifyBatch = null;
 
-    public function __construct()
+    protected ?string $outputDir = null;
+
+    public ?string $path = null;
+
+    protected function __construct(?string $path = null)
     {
         $this->config = config('satis.satis', []);
-        $this->packages = collect();
+        $this->path = $path;
     }
 
     public static function make(): static
@@ -27,68 +38,76 @@ class SatisConfig
         return new static;
     }
 
-    public function setPackages(Collection $packages): static
+    public function homepage(string $url): static
     {
-        $this->packages = $packages;
+        $this->homepage = $url;
 
         return $this;
     }
 
-    public function setHomepage(string $homepage): static
-    {
-        $this->homepage = $homepage;
-
-        return $this;
-    }
-
-    public function setNotifyBatch(string $url): static
+    public function notifyBatch(string $url): static
     {
         $this->notifyBatch = $url;
 
         return $this;
     }
 
-    public function toArray(): array
+    public function outputDir(string $dir): static
     {
-        $config = $this->normalizeKeys($this->config);
-        $config['homepage'] = $this->homepage ?? url('/');
-        $config['notify-batch'] = $this->notifyBatch ?? route('composer.downloads');
-        $config['repositories'] = $this->buildRepositories();
-        $config['require'] = $this->buildRequires();
+        $this->outputDir = $dir;
 
-        return $config;
+        return $this;
     }
 
-    public function toJson(): string
+    public function httpBasic(string $host, string $username, string $password): static
     {
-        return json_encode($this->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $this->httpBasic[$host] = [
+            'username' => $username,
+            'password' => $password,
+        ];
+
+        return $this;
     }
 
-    protected function buildRepositories(): array
+    public function repository(RepositoryData $repository): static
     {
-        // Detect Composer hostnames with credential conflicts (matching CreateAuthJson logic).
-        // When all Composer packages on a hostname share the same credentials,
-        // auth.json handles authentication via http-basic. When credentials differ,
-        // auth.json skips the host and we use per-repository Authorization headers.
-        $conflictedHosts = $this->detectConflictedHosts();
+        $this->repositories[] = $repository;
 
+        return $this;
+    }
+
+    public function require(PackageData $package): static
+    {
+        $this->requires[$package->name] = $package->version;
+
+        return $this;
+    }
+
+    /**
+     * Build config from a collection of Package models (convenience method).
+     *
+     * Handles credential grouping, conflict detection, and deduplication
+     * for building satis.json repositories and requires.
+     */
+    public function setPackages(Collection $packages): static
+    {
+        $conflictedHosts = $this->detectConflictedHosts($packages);
         $urlCredentials = [];
         $seen = [];
 
-        return $this->packages->map(function (Package $package) use (&$urlCredentials, &$seen, $conflictedHosts) {
+        foreach ($packages as $package) {
+            $this->requires[$package->name] = '*';
+
             $type = $this->resolveRepositoryType($package);
-            $url = $package->url;
+            $credential = $package->credential;
+            $url = $credential->url ?? '';
 
             $repo = [
                 'type' => $type,
                 'url' => $url,
             ];
 
-            if ($package->username && $package->password) {
-                // VCS/GitHub packages always need Authorization headers since
-                // auth.json http-basic only covers Composer-type packages.
-                // Composer packages only need headers when the hostname has
-                // credential conflicts (auth.json skips conflicted hosts).
+            if ($credential && $credential->email && $credential->password) {
                 $host = parse_url($url, PHP_URL_HOST);
                 $isVcs = $type !== 'composer';
                 $hasConflict = isset($conflictedHosts[$host]);
@@ -97,7 +116,7 @@ class SatisConfig
                     if ($hasConflict) {
                         $normalizedUrl = rtrim($url, '/');
                         $mapKey = $type.':'.$normalizedUrl;
-                        $credentialHash = md5($package->username.':'.$package->password);
+                        $credentialHash = md5($credential->email.':'.$credential->password);
 
                         if (! isset($urlCredentials[$mapKey])) {
                             $urlCredentials[$mapKey] = [];
@@ -117,22 +136,84 @@ class SatisConfig
                     $repo['options'] = [
                         'http' => [
                             'header' => [
-                                'Authorization: Basic '.base64_encode($package->username.':'.$package->password),
+                                'Authorization: Basic '.base64_encode($credential->email.':'.$credential->password),
                             ],
                         ],
                     ];
                 }
             }
 
-            // Deduplicate: same URL + same type only needs one repo entry.
             $dedupeKey = $type.':'.$repo['url'];
             if (isset($seen[$dedupeKey])) {
-                return null;
+                continue;
             }
             $seen[$dedupeKey] = true;
 
-            return $repo;
-        })->filter()->values()->toArray();
+            $this->repositories[] = $repo;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set homepage from string (BC convenience).
+     */
+    public function setHomepage(string $homepage): static
+    {
+        return $this->homepage($homepage);
+    }
+
+    /**
+     * Set notify-batch URL (BC convenience).
+     */
+    public function setNotifyBatch(string $url): static
+    {
+        return $this->notifyBatch($url);
+    }
+
+    public function toArray(): array
+    {
+        $config = $this->normalizeKeys($this->config);
+        $config['homepage'] = $this->homepage ?? url('/');
+        $config['notify-batch'] = $this->notifyBatch ?? route('composer.downloads');
+
+        $config['repositories'] = $this->buildRepositories();
+        $config['require'] = $this->requires;
+
+        if (! empty($this->httpBasic)) {
+            $config['config']['http-basic'] = $this->httpBasic;
+        }
+
+        if ($this->outputDir) {
+            $config['output-dir'] = $this->outputDir;
+        }
+
+        return $config;
+    }
+
+    public function toJson(): string
+    {
+        return json_encode($this->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    }
+
+    public function __toString(): string
+    {
+        return $this->toJson();
+    }
+
+    protected function buildRepositories(): array
+    {
+        $repos = [];
+
+        foreach ($this->repositories as $repo) {
+            if ($repo instanceof RepositoryData) {
+                $repos[] = $repo->toArray();
+            } else {
+                $repos[] = $repo;
+            }
+        }
+
+        return $repos;
     }
 
     /**
@@ -140,15 +221,17 @@ class SatisConfig
      *
      * @return array<string, true>
      */
-    protected function detectConflictedHosts(): array
+    protected function detectConflictedHosts(Collection $packages): array
     {
         $hostCredentials = [];
 
-        foreach ($this->packages as $package) {
-            if ($package->type === PackageType::Composer && $package->username && $package->password) {
-                $host = parse_url($package->url, PHP_URL_HOST);
+        foreach ($packages as $package) {
+            $credential = $package->credential;
+
+            if ($package->type === PackageType::Composer && $credential && $credential->email && $credential->password) {
+                $host = parse_url($credential->url, PHP_URL_HOST);
                 if ($host) {
-                    $hostCredentials[$host][md5($package->username.':'.$package->password)] = true;
+                    $hostCredentials[$host][md5($credential->email.':'.$credential->password)] = true;
                 }
             }
         }
@@ -162,13 +245,6 @@ class SatisConfig
         }
 
         return $conflicted;
-    }
-
-    protected function buildRequires(): array
-    {
-        return $this->packages->mapWithKeys(function (Package $package) {
-            return [$package->name => '*'];
-        })->toArray();
     }
 
     protected function normalizeKeys(array $data): array

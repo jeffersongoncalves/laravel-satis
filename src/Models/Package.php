@@ -5,6 +5,7 @@ namespace JeffersonGoncalves\LaravelSatis\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -19,10 +20,8 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property int $id
  * @property string $name
  * @property PackageType $type
- * @property string $url
+ * @property int|null $credential_id
  * @property bool $is_dev
- * @property string|null $username
- * @property string|null $password
  * @property string|null $webhook_secret
  * @property string|null $reference
  * @property bool $is_credentials_validated
@@ -33,6 +32,7 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property-read string $name_provider
  * @property-read string $composer_command
  * @property-read string $webhook_url
+ * @property-read Credential|null $credential
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Token> $tokens
  * @property-read PackageRelease|null $packageRelease
  * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageRelease> $packageReleases
@@ -52,10 +52,8 @@ class Package extends Model implements PackageContract
     protected $fillable = [
         'name',
         'type',
-        'url',
+        'credential_id',
         'is_dev',
-        'username',
-        'password',
         'webhook_secret',
         'reference',
         'is_credentials_validated',
@@ -81,14 +79,19 @@ class Package extends Model implements PackageContract
     public static function getLengthCode(): array
     {
         return [
-            'webhook_secret' => 40,
-            'reference' => 20,
+            'webhook_secret' => 64,
+            'reference' => 32,
         ];
     }
 
     public function getTable(): string
     {
         return (config('satis.table_prefix') ?? '').'packages';
+    }
+
+    public function credential(): BelongsTo
+    {
+        return $this->belongsTo(ModelResolver::credential());
     }
 
     public function tokens(): BelongsToMany
@@ -120,7 +123,31 @@ class Package extends Model implements PackageContract
 
     protected function folder(): Attribute
     {
-        return Attribute::get(fn (): string => str($this->url)->replace(':', '-')->replace('/', '-')->toString());
+        return Attribute::get(function (): string {
+            $credential = $this->credential;
+
+            if (! $credential) {
+                return '';
+            }
+
+            if ($this->type === PackageType::Github) {
+                $url = str($credential->url)
+                    ->prepend('https://')
+                    ->replaceFirst('git@', rawurlencode($credential->email).':***@')
+                    ->replaceLast(':', '/')
+                    ->toString();
+            } else {
+                $parsed = parse_url($credential->url);
+                $scheme = ($parsed['scheme'] ?? 'https').'://';
+                $host = $parsed['host'] ?? '';
+                $port = isset($parsed['port']) ? ':'.$parsed['port'] : '';
+                $path = $parsed['path'] ?? '';
+                $query = isset($parsed['query']) ? '?'.$parsed['query'] : '';
+                $url = $scheme.rawurlencode($credential->email).':***@'.$host.$port.$path.$query;
+            }
+
+            return preg_replace('{[^a-z0-9.]}i', '-', $url);
+        });
     }
 
     protected function nameProvider(): Attribute

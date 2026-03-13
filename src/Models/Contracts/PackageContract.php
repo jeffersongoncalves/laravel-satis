@@ -2,12 +2,15 @@
 
 namespace JeffersonGoncalves\LaravelSatis\Models\Contracts;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 interface PackageContract
 {
+    public function credential(): BelongsTo;
+
     public function tokens(): BelongsToMany;
 
     public function packageRelease(): HasOne;

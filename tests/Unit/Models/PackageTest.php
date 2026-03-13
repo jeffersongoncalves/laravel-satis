@@ -1,22 +1,27 @@
 <?php
 
 use JeffersonGoncalves\LaravelSatis\Enums\PackageType;
+use JeffersonGoncalves\LaravelSatis\Models\Credential;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
 use JeffersonGoncalves\LaravelSatis\Models\PackageDownload;
 use JeffersonGoncalves\LaravelSatis\Models\PackageRelease;
 use JeffersonGoncalves\LaravelSatis\Models\Token;
 
 it('can create a package', function () {
+    $credential = Credential::factory()->create([
+        'url' => 'https://repo.example.com',
+    ]);
+
     $package = Package::factory()->create([
         'name' => 'vendor/my-package',
         'type' => PackageType::Composer,
-        'url' => 'https://repo.example.com',
+        'credential_id' => $credential->id,
     ]);
 
     expect($package)->toBeInstanceOf(Package::class)
         ->and($package->name)->toBe('vendor/my-package')
         ->and($package->type)->toBe(PackageType::Composer)
-        ->and($package->url)->toBe('https://repo.example.com');
+        ->and($package->credential_id)->toBe($credential->id);
 });
 
 it('uses the correct table name with prefix', function () {
@@ -53,12 +58,12 @@ it('casts is_credentials_validated to boolean', function () {
     expect($package->is_credentials_validated)->toBeBool()->toBeTrue();
 });
 
-it('hides sensitive fields in array representation', function () {
-    $package = Package::factory()->create();
+it('has a credential relationship', function () {
+    $credential = Credential::factory()->create();
+    $package = Package::factory()->create(['credential_id' => $credential->id]);
 
-    $array = $package->toArray();
-
-    expect($array)->not->toHaveKey('password');
+    expect($package->credential)->toBeInstanceOf(Credential::class)
+        ->and($package->credential->id)->toBe($credential->id);
 });
 
 it('has a tokens relationship', function () {
@@ -102,14 +107,14 @@ it('auto-generates webhook_secret on creation for github type', function () {
     $package = Package::factory()->github()->create(['webhook_secret' => null]);
 
     expect($package->webhook_secret)->not->toBeNull()
-        ->and(strlen($package->webhook_secret))->toBe(40);
+        ->and(strlen($package->webhook_secret))->toBe(64);
 });
 
 it('auto-generates reference on creation', function () {
     $package = Package::factory()->create(['reference' => null]);
 
     expect($package->reference)->not->toBeNull()
-        ->and(strlen($package->reference))->toBe(20);
+        ->and(strlen($package->reference))->toBe(32);
 });
 
 it('can create a github type package', function () {
@@ -141,4 +146,11 @@ it('can create a dev package', function () {
     $package = Package::factory()->dev()->create();
 
     expect($package->is_dev)->toBeTrue();
+});
+
+it('can create a package without credential', function () {
+    $package = Package::factory()->withoutCredential()->create();
+
+    expect($package->credential_id)->toBeNull()
+        ->and($package->credential)->toBeNull();
 });

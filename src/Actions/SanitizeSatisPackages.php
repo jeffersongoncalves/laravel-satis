@@ -32,7 +32,7 @@ class SanitizeSatisPackages
 
     /**
      * Sanitize all JSON files in the given Satis output directory,
-     * removing transport-options that may contain credentials.
+     * removing transport-options and inline credentials from URLs.
      */
     public function sanitizeDirectory(string $buildPath, ?Filesystem $disk = null): void
     {
@@ -56,10 +56,19 @@ class SanitizeSatisPackages
                 }
             }
         }
+
+        $packagesJson = rtrim($buildPath, '/').'/packages.json';
+        if ($disk->exists($packagesJson)) {
+            $content = $disk->get($packagesJson);
+            $cleaned = '';
+            if ($this->stripInlineCredentials($content, $cleaned)) {
+                $disk->put($packagesJson, $cleaned);
+            }
+        }
     }
 
     /**
-     * Remove transport-options from a single JSON file.
+     * Remove transport-options and inline credentials from a single JSON file.
      */
     protected function sanitizeJsonFile(string $filePath, Filesystem $disk): void
     {
@@ -89,10 +98,35 @@ class SanitizeSatisPackages
         }
 
         if ($modified) {
-            $disk->put(
-                $filePath,
-                json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
-            );
+            $content = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: $content;
         }
+
+        $cleaned = '';
+        if ($this->stripInlineCredentials($content, $cleaned)) {
+            $content = $cleaned;
+            $modified = true;
+        }
+
+        if ($modified) {
+            $disk->put($filePath, $content);
+        }
+    }
+
+    /**
+     * Remove inline credentials (user:pass@) from URLs in content.
+     */
+    protected function stripInlineCredentials(string $content, string &$result): bool
+    {
+        $cleaned = preg_replace('#(https?://)([^@/:]+:[^@/:]+)@#', '$1', $content);
+
+        if ($cleaned !== null && $cleaned !== $content) {
+            $result = $cleaned;
+
+            return true;
+        }
+
+        $result = $content;
+
+        return false;
     }
 }

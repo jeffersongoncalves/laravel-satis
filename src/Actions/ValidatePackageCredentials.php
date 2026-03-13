@@ -11,9 +11,20 @@ class ValidatePackageCredentials
 {
     public function execute(Package $package): bool
     {
+        $credential = $package->credential;
+
+        if (! $credential) {
+            $package->update([
+                'is_credentials_validated' => false,
+                'credentials_validated_at' => null,
+            ]);
+
+            return false;
+        }
+
         $isValid = match ($package->type) {
-            PackageType::Composer => $this->validateComposer($package),
-            PackageType::Github => $this->validateGithub($package),
+            PackageType::Composer => $this->validateComposer($credential),
+            PackageType::Github => $this->validateGithub($credential),
             default => false,
         };
 
@@ -25,13 +36,13 @@ class ValidatePackageCredentials
         return $isValid;
     }
 
-    protected function validateComposer(Package $package): bool
+    protected function validateComposer($credential): bool
     {
         try {
             $response = Http::withBasicAuth(
-                $package->username ?? '',
-                $package->password ?? ''
-            )->get($package->url.'/packages.json');
+                $credential->email ?? '',
+                $credential->password ?? ''
+            )->get($credential->url.'/packages.json');
 
             return $response->successful();
         } catch (\Exception $e) {
@@ -39,15 +50,15 @@ class ValidatePackageCredentials
         }
     }
 
-    protected function validateGithub(Package $package): bool
+    protected function validateGithub($credential): bool
     {
         try {
-            $url = $package->url;
+            $url = $credential->url;
 
-            if ($package->username && $package->password) {
+            if ($credential->email && $credential->password) {
                 $parsed = parse_url($url);
                 $url = ($parsed['scheme'] ?? 'https').'://'
-                    .$package->username.':'.$package->password.'@'
+                    .$credential->email.':'.$credential->password.'@'
                     .($parsed['host'] ?? '')
                     .($parsed['path'] ?? '');
             }

@@ -14,10 +14,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('type')->default('composer');
-            $table->string('url');
+            $table->foreignId('credential_id')
+                ->constrained($prefix.'credentials')
+                ->cascadeOnDelete();
             $table->boolean('is_dev')->default(false);
-            $table->string('username')->nullable();
-            $table->string('password')->nullable();
             $table->string('webhook_secret')->nullable()->unique();
             $table->string('reference')->nullable()->unique();
             $table->boolean('is_credentials_validated')->default(false);

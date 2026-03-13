@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Bus;
 use JeffersonGoncalves\LaravelSatis\Jobs\SyncTokenPackages;
 use JeffersonGoncalves\LaravelSatis\Jobs\ValidatePackageCredentialsJob;
+use JeffersonGoncalves\LaravelSatis\Models\Credential;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
 use JeffersonGoncalves\LaravelSatis\Models\Token;
 
@@ -10,7 +11,7 @@ it('generates webhook_secret on creation when github type and empty', function (
     $package = Package::factory()->github()->create(['webhook_secret' => null]);
 
     expect($package->webhook_secret)->not->toBeNull()
-        ->and(strlen($package->webhook_secret))->toBe(40);
+        ->and(strlen($package->webhook_secret))->toBe(64);
 });
 
 it('does not generate webhook_secret on creation when composer type', function () {
@@ -23,7 +24,7 @@ it('generates reference on creation when empty', function () {
     $package = Package::factory()->create(['reference' => null]);
 
     expect($package->reference)->not->toBeNull()
-        ->and(strlen($package->reference))->toBe(20);
+        ->and(strlen($package->reference))->toBe(32);
 });
 
 it('preserves existing webhook_secret on creation', function () {
@@ -46,32 +47,17 @@ it('dispatches ValidatePackageCredentialsJob on creation', function () {
     Bus::assertDispatched(ValidatePackageCredentialsJob::class);
 });
 
-it('clears credentials validation when url changes', function () {
+it('clears credentials validation when credential_id changes', function () {
     $package = Package::factory()->validated()->create();
+    $newCredential = Credential::factory()->create();
 
     expect($package->is_credentials_validated)->toBeTrue();
 
-    $package->update(['url' => 'https://new-repo.example.com']);
+    $package->update(['credential_id' => $newCredential->id]);
     $package->refresh();
 
     expect($package->is_credentials_validated)->toBeFalse()
         ->and($package->credentials_validated_at)->toBeNull();
-});
-
-it('clears credentials validation when username changes', function () {
-    $package = Package::factory()->validated()->create();
-    $package->update(['username' => 'new-user']);
-    $package->refresh();
-
-    expect($package->is_credentials_validated)->toBeFalse();
-});
-
-it('clears credentials validation when password changes', function () {
-    $package = Package::factory()->validated()->create();
-    $package->update(['password' => 'new-password']);
-    $package->refresh();
-
-    expect($package->is_credentials_validated)->toBeFalse();
 });
 
 it('dispatches SyncTokenPackages for linked tokens when credentials are validated', function () {

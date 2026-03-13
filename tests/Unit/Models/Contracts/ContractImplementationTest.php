@@ -1,5 +1,6 @@
 <?php
 
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\CredentialContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\DependencyContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\DependencyPackageReleaseContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageContract;
@@ -8,6 +9,7 @@ use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageReleaseContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageTokenContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackagistContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\TokenContract;
+use JeffersonGoncalves\LaravelSatis\Models\Credential;
 use JeffersonGoncalves\LaravelSatis\Models\Dependency;
 use JeffersonGoncalves\LaravelSatis\Models\DependencyPackageRelease;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
@@ -16,6 +18,10 @@ use JeffersonGoncalves\LaravelSatis\Models\PackageRelease;
 use JeffersonGoncalves\LaravelSatis\Models\PackageToken;
 use JeffersonGoncalves\LaravelSatis\Models\Packagist;
 use JeffersonGoncalves\LaravelSatis\Models\Token;
+
+it('Credential implements CredentialContract', function () {
+    expect(is_a(Credential::class, CredentialContract::class, true))->toBeTrue();
+});
 
 it('Package implements PackageContract', function () {
     expect(is_a(Package::class, PackageContract::class, true))->toBeTrue();

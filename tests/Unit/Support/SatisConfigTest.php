@@ -1,6 +1,9 @@
 <?php
 
+use JeffersonGoncalves\LaravelSatis\Data\PackageData;
+use JeffersonGoncalves\LaravelSatis\Data\RepositoryData;
 use JeffersonGoncalves\LaravelSatis\Enums\PackageType;
+use JeffersonGoncalves\LaravelSatis\Models\Credential;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
 use JeffersonGoncalves\LaravelSatis\Support\SatisConfig;
 
@@ -22,22 +25,59 @@ it('generates config with default values', function () {
 
 it('sets homepage', function () {
     $config = SatisConfig::make()
-        ->setHomepage('https://satis.example.com')
+        ->homepage('https://satis.example.com')
         ->toArray();
 
     expect($config['homepage'])->toBe('https://satis.example.com');
 });
 
-it('builds repositories from packages', function () {
+it('implements Stringable', function () {
+    $config = SatisConfig::make();
+
+    expect((string) $config)->toBeString()
+        ->and(json_decode((string) $config, true))->toBeArray();
+});
+
+it('adds repositories via repository method', function () {
+    $config = SatisConfig::make()
+        ->repository(new RepositoryData(name: 'vendor/pkg', type: 'composer', url: 'https://repo.example.com'))
+        ->require(new PackageData(name: 'vendor/pkg'))
+        ->toArray();
+
+    expect($config['repositories'])->toHaveCount(1)
+        ->and($config['repositories'][0]['type'])->toBe('composer')
+        ->and($config['repositories'][0]['url'])->toBe('https://repo.example.com')
+        ->and($config['require'])->toBe(['vendor/pkg' => '*']);
+});
+
+it('adds http-basic to config', function () {
+    $config = SatisConfig::make()
+        ->httpBasic('repo.example.com', 'user', 'pass')
+        ->toArray();
+
+    expect($config['config']['http-basic']['repo.example.com'])->toBe([
+        'username' => 'user',
+        'password' => 'pass',
+    ]);
+});
+
+it('builds repositories from packages via setPackages', function () {
+    $credential = Credential::factory()->create([
+        'url' => 'https://repo.example.com',
+        'email' => 'user',
+        'password' => 'pass',
+    ]);
+
     $packages = collect([
         Package::factory()->make([
             'name' => 'vendor/package-a',
             'type' => PackageType::Composer,
-            'url' => 'https://repo.example.com',
-            'username' => null,
-            'password' => null,
+            'credential_id' => $credential->id,
         ]),
     ]);
+
+    // Manually set the credential relation to avoid DB lookup on make()
+    $packages->first()->setRelation('credential', $credential);
 
     $config = SatisConfig::make()
         ->setPackages($packages)
@@ -49,36 +89,42 @@ it('builds repositories from packages', function () {
 });
 
 it('maps github type to vcs', function () {
-    $packages = collect([
-        Package::factory()->make([
-            'name' => 'vendor/package-a',
-            'type' => PackageType::Github,
-            'url' => 'https://github.com/vendor/package-a.git',
-            'username' => null,
-            'password' => null,
-        ]),
+    $credential = Credential::factory()->create([
+        'url' => 'https://github.com/vendor/package-a.git',
+        'email' => '',
+        'password' => '',
     ]);
 
+    $package = Package::factory()->make([
+        'name' => 'vendor/package-a',
+        'type' => PackageType::Github,
+        'credential_id' => $credential->id,
+    ]);
+    $package->setRelation('credential', $credential);
+
     $config = SatisConfig::make()
-        ->setPackages($packages)
+        ->setPackages(collect([$package]))
         ->toArray();
 
     expect($config['repositories'][0]['type'])->toBe('vcs');
 });
 
 it('includes basic auth options for github packages with credentials', function () {
-    $packages = collect([
-        Package::factory()->make([
-            'name' => 'vendor/package-a',
-            'type' => PackageType::Github,
-            'url' => 'https://github.com/vendor/package-a.git',
-            'username' => 'user',
-            'password' => 'pass',
-        ]),
+    $credential = Credential::factory()->create([
+        'url' => 'https://github.com/vendor/package-a.git',
+        'email' => 'user',
+        'password' => 'pass',
     ]);
 
+    $package = Package::factory()->make([
+        'name' => 'vendor/package-a',
+        'type' => PackageType::Github,
+        'credential_id' => $credential->id,
+    ]);
+    $package->setRelation('credential', $credential);
+
     $config = SatisConfig::make()
-        ->setPackages($packages)
+        ->setPackages(collect([$package]))
         ->toArray();
 
     $repo = $config['repositories'][0];
@@ -88,32 +134,35 @@ it('includes basic auth options for github packages with credentials', function 
         ->toBe('Authorization: Basic '.base64_encode('user:pass'));
 });
 
-it('does not add auth options for composer packages without credential conflicts (auth.json handles it)', function () {
-    $packages = collect([
-        Package::factory()->make([
-            'name' => 'vendor/package-a',
-            'type' => PackageType::Composer,
-            'url' => 'https://repo.example.com',
-            'username' => 'user',
-            'password' => 'pass',
-        ]),
+it('does not add auth options for composer packages without credential conflicts', function () {
+    $credential = Credential::factory()->create([
+        'url' => 'https://repo.example.com',
+        'email' => 'user',
+        'password' => 'pass',
     ]);
 
+    $package = Package::factory()->make([
+        'name' => 'vendor/package-a',
+        'type' => PackageType::Composer,
+        'credential_id' => $credential->id,
+    ]);
+    $package->setRelation('credential', $credential);
+
     $config = SatisConfig::make()
-        ->setPackages($packages)
+        ->setPackages(collect([$package]))
         ->toArray();
 
     $repo = $config['repositories'][0];
 
-    // Composer packages without credential conflicts rely on auth.json http-basic.
-    // Adding Authorization headers would cause duplicate authentication (HTTP 400).
     expect($repo)->not->toHaveKey('options');
 });
 
 it('builds require list from packages', function () {
+    $credential = Credential::factory()->create();
+
     $packages = collect([
-        Package::factory()->make(['name' => 'vendor/package-a']),
-        Package::factory()->make(['name' => 'vendor/package-b']),
+        tap(Package::factory()->make(['name' => 'vendor/package-a', 'credential_id' => $credential->id]), fn ($p) => $p->setRelation('credential', $credential)),
+        tap(Package::factory()->make(['name' => 'vendor/package-b', 'credential_id' => $credential->id]), fn ($p) => $p->setRelation('credential', $credential)),
     ]);
 
     $config = SatisConfig::make()
@@ -134,21 +183,28 @@ it('converts to JSON', function () {
 });
 
 it('makes URLs unique for same-url packages with different credentials', function () {
+    $cred1 = Credential::factory()->create([
+        'url' => 'https://packages.example.com',
+        'email' => 'license-1',
+        'password' => 'secret-1',
+    ]);
+    $cred2 = Credential::factory()->create([
+        'url' => 'https://packages.example.com',
+        'email' => 'license-2',
+        'password' => 'secret-2',
+    ]);
+
     $packages = collect([
-        Package::factory()->make([
+        tap(Package::factory()->make([
             'name' => 'vendor/package-a',
             'type' => PackageType::Composer,
-            'url' => 'https://packages.example.com',
-            'username' => 'license-1',
-            'password' => 'secret-1',
-        ]),
-        Package::factory()->make([
+            'credential_id' => $cred1->id,
+        ]), fn ($p) => $p->setRelation('credential', $cred1)),
+        tap(Package::factory()->make([
             'name' => 'vendor/package-b',
             'type' => PackageType::Composer,
-            'url' => 'https://packages.example.com',
-            'username' => 'license-2',
-            'password' => 'secret-2',
-        ]),
+            'credential_id' => $cred2->id,
+        ]), fn ($p) => $p->setRelation('credential', $cred2)),
     ]);
 
     $config = SatisConfig::make()
@@ -170,21 +226,23 @@ it('makes URLs unique for same-url packages with different credentials', functio
 });
 
 it('deduplicates repos when same url and same credentials', function () {
+    $credential = Credential::factory()->create([
+        'url' => 'https://packages.example.com',
+        'email' => 'user',
+        'password' => 'pass',
+    ]);
+
     $packages = collect([
-        Package::factory()->make([
+        tap(Package::factory()->make([
             'name' => 'vendor/package-a',
             'type' => PackageType::Composer,
-            'url' => 'https://packages.example.com',
-            'username' => 'user',
-            'password' => 'pass',
-        ]),
-        Package::factory()->make([
+            'credential_id' => $credential->id,
+        ]), fn ($p) => $p->setRelation('credential', $credential)),
+        tap(Package::factory()->make([
             'name' => 'vendor/package-b',
             'type' => PackageType::Composer,
-            'url' => 'https://packages.example.com',
-            'username' => 'user',
-            'password' => 'pass',
-        ]),
+            'credential_id' => $credential->id,
+        ]), fn ($p) => $p->setRelation('credential', $credential)),
     ]);
 
     $config = SatisConfig::make()
@@ -202,28 +260,38 @@ it('deduplicates repos when same url and same credentials', function () {
 });
 
 it('handles three credential sets on same url', function () {
+    $cred1 = Credential::factory()->create([
+        'url' => 'https://packages.example.com',
+        'email' => 'user-1',
+        'password' => 'pass-1',
+    ]);
+    $cred2 = Credential::factory()->create([
+        'url' => 'https://packages.example.com',
+        'email' => 'user-2',
+        'password' => 'pass-2',
+    ]);
+    $cred3 = Credential::factory()->create([
+        'url' => 'https://packages.example.com',
+        'email' => 'user-3',
+        'password' => 'pass-3',
+    ]);
+
     $packages = collect([
-        Package::factory()->make([
+        tap(Package::factory()->make([
             'name' => 'vendor/package-a',
             'type' => PackageType::Composer,
-            'url' => 'https://packages.example.com',
-            'username' => 'user-1',
-            'password' => 'pass-1',
-        ]),
-        Package::factory()->make([
+            'credential_id' => $cred1->id,
+        ]), fn ($p) => $p->setRelation('credential', $cred1)),
+        tap(Package::factory()->make([
             'name' => 'vendor/package-b',
             'type' => PackageType::Composer,
-            'url' => 'https://packages.example.com',
-            'username' => 'user-2',
-            'password' => 'pass-2',
-        ]),
-        Package::factory()->make([
+            'credential_id' => $cred2->id,
+        ]), fn ($p) => $p->setRelation('credential', $cred2)),
+        tap(Package::factory()->make([
             'name' => 'vendor/package-c',
             'type' => PackageType::Composer,
-            'url' => 'https://packages.example.com',
-            'username' => 'user-3',
-            'password' => 'pass-3',
-        ]),
+            'credential_id' => $cred3->id,
+        ]), fn ($p) => $p->setRelation('credential', $cred3)),
     ]);
 
     $config = SatisConfig::make()
@@ -237,21 +305,23 @@ it('handles three credential sets on same url', function () {
 });
 
 it('deduplicates repos without credentials sharing same url', function () {
+    $credential = Credential::factory()->create([
+        'url' => 'https://repo.example.com',
+        'email' => '',
+        'password' => '',
+    ]);
+
     $packages = collect([
-        Package::factory()->make([
+        tap(Package::factory()->make([
             'name' => 'vendor/package-a',
             'type' => PackageType::Composer,
-            'url' => 'https://repo.example.com',
-            'username' => null,
-            'password' => null,
-        ]),
-        Package::factory()->make([
+            'credential_id' => $credential->id,
+        ]), fn ($p) => $p->setRelation('credential', $credential)),
+        tap(Package::factory()->make([
             'name' => 'vendor/package-b',
             'type' => PackageType::Composer,
-            'url' => 'https://repo.example.com',
-            'username' => null,
-            'password' => null,
-        ]),
+            'credential_id' => $credential->id,
+        ]), fn ($p) => $p->setRelation('credential', $credential)),
     ]);
 
     $config = SatisConfig::make()

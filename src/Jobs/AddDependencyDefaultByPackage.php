@@ -46,9 +46,7 @@ class AddDependencyDefaultByPackage implements ShouldQueue
         $packageModel::create([
             'name' => $this->package_dependency,
             'type' => $this->package->type,
-            'url' => $this->package->url,
-            'username' => $this->package->username,
-            'password' => $this->package->password,
+            'credential_id' => $this->package->credential_id,
         ]);
     }
 }

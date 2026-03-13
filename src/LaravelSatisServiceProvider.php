@@ -10,6 +10,7 @@ use JeffersonGoncalves\LaravelSatis\Commands\SatisClean;
 use JeffersonGoncalves\LaravelSatis\Commands\SatisSanitize;
 use JeffersonGoncalves\LaravelSatis\Commands\SatisTokenBuild;
 use JeffersonGoncalves\LaravelSatis\Commands\SatisValidate;
+use JeffersonGoncalves\LaravelSatis\Models\Contracts\CredentialContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\DependencyContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\DependencyPackageReleaseContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageContract;
@@ -35,6 +36,7 @@ class LaravelSatisServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasTranslations()
             ->hasMigrations([
+                'create_satis_credentials_table',
                 'create_satis_packages_table',
                 'create_satis_tokens_table',
                 'create_satis_package_token_table',
@@ -66,6 +68,7 @@ class LaravelSatisServiceProvider extends PackageServiceProvider
     protected function registerModelBindings(): void
     {
         $bindings = [
+            CredentialContract::class => 'credential',
             PackageContract::class => 'package',
             TokenContract::class => 'token',
             DependencyContract::class => 'dependency',

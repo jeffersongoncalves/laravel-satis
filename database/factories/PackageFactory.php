@@ -4,6 +4,7 @@ namespace JeffersonGoncalves\LaravelSatis\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use JeffersonGoncalves\LaravelSatis\Enums\PackageType;
+use JeffersonGoncalves\LaravelSatis\Models\Credential;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
 
 class PackageFactory extends Factory
@@ -15,9 +16,7 @@ class PackageFactory extends Factory
         return [
             'name' => $this->faker->word().'/'.$this->faker->word(),
             'type' => PackageType::Composer,
-            'url' => $this->faker->url(),
-            'username' => $this->faker->userName(),
-            'password' => $this->faker->password(),
+            'credential_id' => Credential::factory(),
             'is_dev' => false,
             'is_credentials_validated' => false,
         ];
@@ -42,7 +41,14 @@ class PackageFactory extends Factory
     {
         return $this->state(fn () => [
             'type' => PackageType::Github,
-            'url' => 'https://github.com/'.$this->faker->word().'/'.$this->faker->word().'.git',
+            'credential_id' => Credential::factory()->github(),
+        ]);
+    }
+
+    public function withoutCredential(): static
+    {
+        return $this->state(fn () => [
+            'credential_id' => null,
         ]);
     }
 }

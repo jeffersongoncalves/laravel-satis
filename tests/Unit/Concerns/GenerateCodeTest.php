@@ -13,8 +13,8 @@ it('returns column codes for token', function () {
 
 it('returns length codes for package', function () {
     expect(Package::getLengthCode())->toBe([
-        'webhook_secret' => 40,
-        'reference' => 20,
+        'webhook_secret' => 64,
+        'reference' => 32,
     ]);
 });
 
@@ -35,16 +35,16 @@ it('generates token with 64 characters', function () {
         ->and(strlen($token))->toBe(64);
 });
 
-it('generates webhook secret with 40 characters', function () {
+it('generates webhook secret with 64 characters', function () {
     $secret = Package::generateCode('webhook_secret');
 
-    expect(strlen($secret))->toBe(40);
+    expect(strlen($secret))->toBe(64);
 });
 
-it('generates reference with 20 characters', function () {
+it('generates reference with 32 characters', function () {
     $reference = Package::generateCode('reference');
 
-    expect(strlen($reference))->toBe(20);
+    expect(strlen($reference))->toBe(32);
 });
 
 it('generates unique codes on each call', function () {

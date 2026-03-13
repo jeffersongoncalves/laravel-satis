@@ -11,6 +11,12 @@ beforeEach(function () {
             $table->unsignedBigInteger('team_id')->nullable();
         });
     }
+
+    if (! Schema::hasColumn('satis_credentials', 'team_id')) {
+        Schema::table('satis_credentials', function (Blueprint $table) {
+            $table->unsignedBigInteger('team_id')->nullable();
+        });
+    }
 });
 
 it('does not scope queries when tenancy is disabled', function () {
@@ -53,7 +59,6 @@ it('scopes queries by tenant when tenancy is enabled', function () {
     DB::table('satis_packages')->insert([
         'name' => 'other/package',
         'type' => 'composer',
-        'url' => 'https://example.com',
         'team_id' => 2,
         'is_credentials_validated' => false,
         'created_at' => now(),

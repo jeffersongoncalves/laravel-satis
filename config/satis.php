@@ -45,6 +45,7 @@ return [
     |
     */
     'models' => [
+        'credential' => \JeffersonGoncalves\LaravelSatis\Models\Credential::class,
         'package' => \JeffersonGoncalves\LaravelSatis\Models\Package::class,
         'token' => \JeffersonGoncalves\LaravelSatis\Models\Token::class,
         'dependency' => \JeffersonGoncalves\LaravelSatis\Models\Dependency::class,

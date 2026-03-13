@@ -7,25 +7,13 @@ parameters:
 			path: src/Actions/ValidatePackageCredentials.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$password\.$#'
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$credential_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: src/Jobs/AddDependencyDefaultByPackage.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Jobs/AddDependencyDefaultByPackage.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$url\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Jobs/AddDependencyDefaultByPackage.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$username\.$#'
 			identifier: property.notFound
 			count: 1
 			path: src/Jobs/AddDependencyDefaultByPackage.php
