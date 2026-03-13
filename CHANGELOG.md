@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.0.1 - 2026-03-13
+
+### Documentation
+
+- Updated Laravel Boost guidelines and skill files for v2.0.0 changes
+- Updated README with Credential model usage and upgrade guide from v1.x
+
 ## v2.0.0 - 2026-03-13
 
 ### Breaking Changes
