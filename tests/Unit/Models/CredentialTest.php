@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Carbon;
 use JeffersonGoncalves\LaravelSatis\Models\Credential;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
 
@@ -47,7 +48,7 @@ it('casts is_validated to boolean', function () {
 it('casts validated_at to datetime', function () {
     $credential = Credential::factory()->validated()->create();
 
-    expect($credential->validated_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class);
+    expect($credential->validated_at)->toBeInstanceOf(Carbon::class);
 });
 
 it('hides password in array representation', function () {

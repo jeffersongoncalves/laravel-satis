@@ -5,6 +5,7 @@ namespace JeffersonGoncalves\LaravelSatis\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
+use JeffersonGoncalves\LaravelSatis\Models\Token;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -12,7 +13,7 @@ class EnsureUserHasLicense
 {
     public function handle(Request $request, Closure $next): Response
     {
-        /** @var \JeffersonGoncalves\LaravelSatis\Models\Token $token */
+        /** @var Token $token */
         $token = $request->user(config('satis.auth.guard'));
         $vendor = $request->route('vendor');
         $package = $request->route('package');

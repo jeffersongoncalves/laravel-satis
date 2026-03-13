@@ -3,12 +3,14 @@
 namespace JeffersonGoncalves\LaravelSatis\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 use JeffersonGoncalves\LaravelSatis\Concerns\GenerateCode;
 use JeffersonGoncalves\LaravelSatis\Concerns\HasTenancy;
 use JeffersonGoncalves\LaravelSatis\Database\Factories\PackageFactory;
@@ -25,18 +27,18 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property string|null $webhook_secret
  * @property string|null $reference
  * @property bool $is_credentials_validated
- * @property \Illuminate\Support\Carbon|null $credentials_validated_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $credentials_validated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read string $folder
  * @property-read string $name_provider
  * @property-read string $composer_command
  * @property-read string $webhook_url
  * @property-read Credential|null $credential
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Token> $tokens
+ * @property-read Collection<int, Token> $tokens
  * @property-read PackageRelease|null $packageRelease
- * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageRelease> $packageReleases
- * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageDownload> $packageDownloads
+ * @property-read Collection<int, PackageRelease> $packageReleases
+ * @property-read Collection<int, PackageDownload> $packageDownloads
  */
 class Package extends Model implements PackageContract
 {

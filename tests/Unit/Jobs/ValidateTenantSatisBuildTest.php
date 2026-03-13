@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use JeffersonGoncalves\LaravelSatis\Actions\ValidatePackageCredentials;
 use JeffersonGoncalves\LaravelSatis\Jobs\SyncTenantPackages;
 use JeffersonGoncalves\LaravelSatis\Jobs\ValidateTenantSatisBuild;
 use JeffersonGoncalves\LaravelSatis\Jobs\ValidateTokenSatisBuild;
@@ -16,7 +17,7 @@ it('dispatches SyncTenantPackages when packages.json does not exist', function (
     Bus::fake([SyncTenantPackages::class, ValidateTokenSatisBuild::class]);
 
     $job = new ValidateTenantSatisBuild;
-    $job->handle(app(\JeffersonGoncalves\LaravelSatis\Actions\ValidatePackageCredentials::class));
+    $job->handle(app(ValidatePackageCredentials::class));
 
     Bus::assertDispatched(SyncTenantPackages::class);
 });
@@ -39,7 +40,7 @@ it('dispatches SyncTenantPackages when package was updated after last build', fu
     Bus::fake([SyncTenantPackages::class, ValidateTokenSatisBuild::class]);
 
     $job = new ValidateTenantSatisBuild;
-    $job->handle(app(\JeffersonGoncalves\LaravelSatis\Actions\ValidatePackageCredentials::class));
+    $job->handle(app(ValidatePackageCredentials::class));
 
     Bus::assertDispatched(SyncTenantPackages::class);
 });
@@ -59,7 +60,7 @@ it('does not dispatch SyncTenantPackages when build is up to date', function () 
     Bus::fake([SyncTenantPackages::class, ValidateTokenSatisBuild::class]);
 
     $job = new ValidateTenantSatisBuild;
-    $job->handle(app(\JeffersonGoncalves\LaravelSatis\Actions\ValidatePackageCredentials::class));
+    $job->handle(app(ValidatePackageCredentials::class));
 
     Bus::assertNotDispatched(SyncTenantPackages::class);
 });
@@ -78,7 +79,7 @@ it('dispatches ValidateTokenSatisBuild for each token', function () {
     Bus::fake([SyncTenantPackages::class, ValidateTokenSatisBuild::class]);
 
     $job = new ValidateTenantSatisBuild;
-    $job->handle(app(\JeffersonGoncalves\LaravelSatis\Actions\ValidatePackageCredentials::class));
+    $job->handle(app(ValidatePackageCredentials::class));
 
     Bus::assertDispatched(ValidateTokenSatisBuild::class, 2);
 });

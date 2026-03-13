@@ -4,6 +4,7 @@ namespace JeffersonGoncalves\LaravelSatis\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\Carbon;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\DependencyPackageReleaseContract;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
@@ -13,8 +14,8 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property int $package_release_id
  * @property int $dependency_id
  * @property string|null $version
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read Package $package
  * @property-read PackageRelease $packageRelease
  * @property-read Dependency $dependency

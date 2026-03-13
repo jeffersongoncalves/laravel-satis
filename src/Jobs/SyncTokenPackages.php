@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use JeffersonGoncalves\LaravelSatis\Actions\MergeSatisPackagesJson;
 use JeffersonGoncalves\LaravelSatis\Actions\SanitizeSatisPackages;
+use JeffersonGoncalves\LaravelSatis\Data\PackageData;
+use JeffersonGoncalves\LaravelSatis\Data\RepositoryData;
 use JeffersonGoncalves\LaravelSatis\Enums\PackageType;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
 use JeffersonGoncalves\LaravelSatis\Models\Token;
@@ -50,7 +52,7 @@ class SyncTokenPackages implements ShouldQueue
 
     public function handle(): void
     {
-        /** @var \Illuminate\Support\Collection<int, Package> $packages */
+        /** @var Collection<int, Package> $packages */
         $packages = $this->token->packages()->with('credential')->get();
 
         if ($packages->isEmpty()) {
@@ -177,13 +179,13 @@ class SyncTokenPackages implements ShouldQueue
         $url = $this->buildInlineAuthUrl($package);
         $type = $package->type === PackageType::Github ? 'vcs' : 'composer';
 
-        $config->repository(new \JeffersonGoncalves\LaravelSatis\Data\RepositoryData(
+        $config->repository(new RepositoryData(
             name: $package->name,
             type: $type,
             url: $url,
         ));
 
-        $config->require(new \JeffersonGoncalves\LaravelSatis\Data\PackageData(
+        $config->require(new PackageData(
             name: $package->name,
         ));
     }

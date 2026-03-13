@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
 use JeffersonGoncalves\LaravelSatis\Models\Packagist;
@@ -80,7 +81,7 @@ it('returns private type when packagist API returns not found', function () {
 
 it('returns private type when packagist API throws connection exception', function () {
     Http::fake(function () {
-        throw new \Illuminate\Http\Client\ConnectionException('Connection refused');
+        throw new ConnectionException('Connection refused');
     });
 
     $type = Packagist::getDependencyType('vendor/unreachable-pkg');

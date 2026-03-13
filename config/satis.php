@@ -1,5 +1,15 @@
 <?php
 
+use JeffersonGoncalves\LaravelSatis\Models\Credential;
+use JeffersonGoncalves\LaravelSatis\Models\Dependency;
+use JeffersonGoncalves\LaravelSatis\Models\DependencyPackageRelease;
+use JeffersonGoncalves\LaravelSatis\Models\Package;
+use JeffersonGoncalves\LaravelSatis\Models\PackageDownload;
+use JeffersonGoncalves\LaravelSatis\Models\PackageRelease;
+use JeffersonGoncalves\LaravelSatis\Models\PackageToken;
+use JeffersonGoncalves\LaravelSatis\Models\Packagist;
+use JeffersonGoncalves\LaravelSatis\Models\Token;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -45,15 +55,15 @@ return [
     |
     */
     'models' => [
-        'credential' => \JeffersonGoncalves\LaravelSatis\Models\Credential::class,
-        'package' => \JeffersonGoncalves\LaravelSatis\Models\Package::class,
-        'token' => \JeffersonGoncalves\LaravelSatis\Models\Token::class,
-        'dependency' => \JeffersonGoncalves\LaravelSatis\Models\Dependency::class,
-        'package_release' => \JeffersonGoncalves\LaravelSatis\Models\PackageRelease::class,
-        'package_download' => \JeffersonGoncalves\LaravelSatis\Models\PackageDownload::class,
-        'dependency_package_release' => \JeffersonGoncalves\LaravelSatis\Models\DependencyPackageRelease::class,
-        'package_token' => \JeffersonGoncalves\LaravelSatis\Models\PackageToken::class,
-        'packagist' => \JeffersonGoncalves\LaravelSatis\Models\Packagist::class,
+        'credential' => Credential::class,
+        'package' => Package::class,
+        'token' => Token::class,
+        'dependency' => Dependency::class,
+        'package_release' => PackageRelease::class,
+        'package_download' => PackageDownload::class,
+        'dependency_package_release' => DependencyPackageRelease::class,
+        'package_token' => PackageToken::class,
+        'packagist' => Packagist::class,
     ],
 
     /*

@@ -5,9 +5,11 @@ namespace JeffersonGoncalves\LaravelSatis\Models;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
 use JeffersonGoncalves\LaravelSatis\Concerns\GenerateCode;
 use JeffersonGoncalves\LaravelSatis\Concerns\HasTenancy;
 use JeffersonGoncalves\LaravelSatis\Database\Factories\TokenFactory;
@@ -19,11 +21,11 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property string $name
  * @property string $email
  * @property string $token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read string $composer_command
  * @property-read string $composer_repository
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Package> $packages
+ * @property-read Collection<int, Package> $packages
  */
 class Token extends Model implements AuthenticatableContract, TokenContract
 {

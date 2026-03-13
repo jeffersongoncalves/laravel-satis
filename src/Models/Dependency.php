@@ -2,9 +2,11 @@
 
 namespace JeffersonGoncalves\LaravelSatis\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use JeffersonGoncalves\LaravelSatis\Enums\DependencyType;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\DependencyContract;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
@@ -14,10 +16,10 @@ use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
  * @property string $name
  * @property array|null $versions
  * @property DependencyType|null $type
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, DependencyPackageRelease> $packageReleaseRequires
- * @property-read \Illuminate\Database\Eloquent\Collection<int, PackageRelease> $packageReleases
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection<int, DependencyPackageRelease> $packageReleaseRequires
+ * @property-read Collection<int, PackageRelease> $packageReleases
  */
 class Dependency extends Model implements DependencyContract
 {
