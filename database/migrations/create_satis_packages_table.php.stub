@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('type')->default('composer');
             $table->foreignId('credential_id')
+                ->nullable()
                 ->constrained($prefix.'credentials')
                 ->cascadeOnDelete();
             $table->boolean('is_dev')->default(false);

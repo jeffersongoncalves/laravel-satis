@@ -45,9 +45,7 @@ abstract class TestCase extends Orchestra
             $filename = basename(str_replace('.php.stub', '.php', $stub));
             $target = $tempPath.'/'.$filename;
 
-            if (! file_exists($target)) {
-                copy($stub, $target);
-            }
+            copy($stub, $target);
         }
 
         $this->loadMigrationsFrom($tempPath);
