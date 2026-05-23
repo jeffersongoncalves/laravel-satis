@@ -51,11 +51,11 @@ it('does not dispatch SyncTenantPackages when build is up to date', function () 
     $disk = Storage::disk('local');
     $storagePath = config('satis.storage_path', 'satis');
 
-    Package::factory()->create();
+    $package = Package::factory()->create();
 
     // Create packages.json AFTER the package, making the build "newer"
-    sleep(1);
     $disk->put($storagePath.'/tenant/packages.json', '{"packages":{}}');
+    touch($disk->path($storagePath.'/tenant/packages.json'), $package->updated_at->addMinute()->timestamp);
 
     Bus::fake([SyncTenantPackages::class, ValidateTokenSatisBuild::class]);
 
