@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.1.0 - 2026-05-23
+
+### What's Changed
+
+* build(deps): bump ramsey/composer-install from 3 to 4 by @dependabot[bot] in https://github.com/jeffersongoncalves/laravel-satis/pull/4
+* build(deps): bump dependabot/fetch-metadata from 2.5.0 to 3.0.0 by @dependabot[bot] in https://github.com/jeffersongoncalves/laravel-satis/pull/5
+
+**Full Changelog**: https://github.com/jeffersongoncalves/laravel-satis/compare/v2.0.1...v2.1.0
+
 ## v2.0.1 - 2026-03-13
 
 ### Documentation
