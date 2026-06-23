@@ -30,8 +30,17 @@ A Laravel package for managing private Composer repositories powered by [Satis](
 ## Requirements
 
 - PHP 8.2+
-- Laravel 10+
+- Laravel 11, 12 or 13
 - Satis (`composer/satis` — included as dependency)
+
+> **Note on stability:** this package depends on `composer/satis` at version `3.x-dev`, which does not yet have a stable release. For this reason, when installing the package in your application, Composer will require your consuming project to allow development packages. Configure this in your application's `composer.json`:
+>
+> ```json
+> {
+>     "minimum-stability": "dev",
+>     "prefer-stable": true
+> }
+> ```
 
 ## Installation
 

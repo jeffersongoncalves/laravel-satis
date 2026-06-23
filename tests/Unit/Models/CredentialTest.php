@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use JeffersonGoncalves\LaravelSatis\Models\Credential;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
 
@@ -49,6 +50,19 @@ it('casts validated_at to datetime', function () {
     $credential = Credential::factory()->validated()->create();
 
     expect($credential->validated_at)->toBeInstanceOf(Carbon::class);
+});
+
+it('stores the password encrypted at rest but exposes it decrypted', function () {
+    $credential = Credential::factory()->create(['password' => 'super-secret']);
+
+    expect($credential->password)->toBe('super-secret');
+
+    $raw = DB::table($credential->getTable())
+        ->where('id', $credential->id)
+        ->value('password');
+
+    expect($raw)->not->toBe('super-secret')
+        ->and(decrypt($raw, false))->toBe('super-secret');
 });
 
 it('hides password in array representation', function () {

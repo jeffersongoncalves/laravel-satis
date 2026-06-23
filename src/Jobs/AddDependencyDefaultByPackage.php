@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use JeffersonGoncalves\LaravelSatis\Models\Package;
 use JeffersonGoncalves\LaravelSatis\Support\ModelResolver;
 
 class AddDependencyDefaultByPackage implements ShouldQueue
@@ -43,10 +44,13 @@ class AddDependencyDefaultByPackage implements ShouldQueue
             return;
         }
 
+        /** @var Package $package */
+        $package = $this->package;
+
         $packageModel::create([
             'name' => $this->package_dependency,
-            'type' => $this->package->type,
-            'credential_id' => $this->package->credential_id,
+            'type' => $package->type,
+            'credential_id' => $package->credential_id,
         ]);
     }
 }

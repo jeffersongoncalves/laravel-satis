@@ -21,6 +21,7 @@
     "require": {
         "php": "^8.2",
         "composer/satis": "3.x-dev",
+        "jeffersongoncalves/laravel-webhook-signatures": "^1.1",
         "spatie/laravel-package-tools": "^1.15"
     },
     "require-dev": {
@@ -50,6 +51,7 @@
         }
     },
     "scripts": {
+        "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
         "format": "vendor/bin/pint"

@@ -46,15 +46,18 @@ class EloquentTokenProvider implements UserProvider
     {
         $model = $this->createModel();
 
-        return $this->newModelQuery($model)
+        /** @var (UserContract&Model)|null $retrievedModel */
+        $retrievedModel = $this->newModelQuery($model)
             ->where($model->getAuthIdentifierName(), $identifier)
             ->first();
+
+        return $retrievedModel;
     }
 
     /**
      * Create a new instance of the model.
      *
-     * @return Model
+     * @return UserContract&Model
      */
     public function createModel()
     {
@@ -66,10 +69,8 @@ class EloquentTokenProvider implements UserProvider
     /**
      * Get a new query builder for the model instance.
      *
-     * @template TModel of \Illuminate\Database\Eloquent\Model
-     *
-     * @param  TModel|null  $model
-     * @return Builder<TModel>
+     * @param  Model|null  $model
+     * @return Builder<Model>
      */
     protected function newModelQuery($model = null)
     {

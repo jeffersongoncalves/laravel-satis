@@ -107,7 +107,7 @@ return [
         ],
         'minimum-stability' => 'stable',
         'config' => [
-            'secure-http' => false,
+            'secure-http' => true,
         ],
     ],
 

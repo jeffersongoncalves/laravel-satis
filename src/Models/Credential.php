@@ -50,6 +50,7 @@ class Credential extends Model implements CredentialContract
     protected function casts(): array
     {
         return [
+            'password' => 'encrypted',
             'is_validated' => 'boolean',
             'validated_at' => 'datetime',
         ];

@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Sleep;
 use JeffersonGoncalves\LaravelSatis\Actions\MergeSatisPackagesJson;
 use JeffersonGoncalves\LaravelSatis\Actions\SanitizeSatisPackages;
 use JeffersonGoncalves\LaravelSatis\Data\PackageData;
@@ -164,7 +165,7 @@ class SyncTokenPackages implements ShouldQueue
     protected function waitIfSameHost(?string $host, array $previousHosts): void
     {
         if ($host && in_array($host, $previousHosts)) {
-            sleep(self::SAME_HOST_WAIT_SECONDS);
+            Sleep::sleep(self::SAME_HOST_WAIT_SECONDS);
         }
     }
 
@@ -262,7 +263,7 @@ class SyncTokenPackages implements ShouldQueue
                     'token_id' => $this->token->id,
                 ]);
 
-                sleep($delay);
+                Sleep::sleep($delay);
 
                 continue;
             }

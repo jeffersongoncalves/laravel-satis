@@ -7,40 +7,10 @@ parameters:
 			path: src/Actions/ValidatePackageCredentials.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$credential_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Jobs/AddDependencyDefaultByPackage.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Jobs/AddDependencyDefaultByPackage.php
-
-		-
 			message: '#^Unsafe call to private method JeffersonGoncalves\\LaravelSatis\\Models\\Packagist\:\:getRepoByPackagist\(\) through static\:\:\.$#'
 			identifier: staticClassAccess.privateMethod
 			count: 1
 			path: src/Models/Packagist.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getAuthIdentifierName\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: src/Providers/EloquentTokenProvider.php
-
-		-
-			message: '#^Method JeffersonGoncalves\\LaravelSatis\\Providers\\EloquentTokenProvider\:\:newModelQuery\(\) should return Illuminate\\Database\\Eloquent\\Builder\<TModel of Illuminate\\Database\\Eloquent\\Model\> but returns Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Providers/EloquentTokenProvider.php
-
-		-
-			message: '#^Method JeffersonGoncalves\\LaravelSatis\\Providers\\EloquentTokenProvider\:\:retrieveById\(\) should return Illuminate\\Contracts\\Auth\\Authenticatable\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Providers/EloquentTokenProvider.php
 
 		-
 			message: '#^Unsafe usage of new static\(\)\.$#'

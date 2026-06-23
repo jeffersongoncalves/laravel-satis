@@ -12,16 +12,24 @@ function webhookUrl(Package $package): string
     return '/'.config('satis.routes.api_prefix').'/webhooks/github/'.$package->reference;
 }
 
+function postSignedWebhook(object $test, Package $package, array $payload, string $event)
+{
+    $body = json_encode($payload);
+    $signature = 'sha256='.hash_hmac('sha256', $body, (string) $package->webhook_secret);
+
+    return $test->call('POST', webhookUrl($package), [], [], [], [
+        'CONTENT_TYPE' => 'application/json',
+        'HTTP_X_HUB_SIGNATURE_256' => $signature,
+        'HTTP_X_GITHUB_EVENT' => $event,
+    ], $body);
+}
+
 it('accepts valid github webhook with push event', function () {
     Bus::fake();
 
     $package = Package::factory()->github()->create();
 
-    $response = $this->postJson(
-        webhookUrl($package),
-        ['ref' => 'refs/heads/main'],
-        ['X-GitHub-Event' => 'push']
-    );
+    $response = postSignedWebhook($this, $package, ['ref' => 'refs/heads/main'], 'push');
 
     $response->assertOk()
         ->assertJson(['status' => 'ok']);
@@ -34,11 +42,7 @@ it('accepts valid github webhook with release event', function () {
 
     $package = Package::factory()->github()->create();
 
-    $response = $this->postJson(
-        webhookUrl($package),
-        ['action' => 'published'],
-        ['X-GitHub-Event' => 'release']
-    );
+    $response = postSignedWebhook($this, $package, ['action' => 'published'], 'release');
 
     $response->assertOk()
         ->assertJson(['status' => 'ok']);
@@ -51,11 +55,7 @@ it('accepts valid github webhook with create event', function () {
 
     $package = Package::factory()->github()->create();
 
-    $response = $this->postJson(
-        webhookUrl($package),
-        ['ref_type' => 'tag'],
-        ['X-GitHub-Event' => 'create']
-    );
+    $response = postSignedWebhook($this, $package, ['ref_type' => 'tag'], 'create');
 
     $response->assertOk()
         ->assertJson(['status' => 'ok']);
@@ -162,6 +162,32 @@ it('rejects invalid webhook signature', function () {
     Bus::assertNotDispatched(SyncTenantPackages::class);
 });
 
+it('rejects webhook when secret is set but signature header is missing', function () {
+    Bus::fake();
+
+    $package = Package::factory()->github()->create();
+
+    expect($package->webhook_secret)->not->toBeEmpty();
+
+    $payload = json_encode(['ref' => 'refs/heads/main']);
+
+    $response = $this->call('POST',
+        webhookUrl($package),
+        [],
+        [],
+        [],
+        [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_X_GITHUB_EVENT' => 'push',
+        ],
+        $payload
+    );
+
+    expect($response->status())->toBe(403);
+
+    Bus::assertNotDispatched(SyncTenantPackages::class);
+});
+
 it('returns 404 for non-existent package reference', function () {
     Bus::fake();
 
@@ -183,11 +209,7 @@ it('dispatches SyncTokenPackages for each token of the package', function () {
 
     Bus::fake();
 
-    $response = $this->postJson(
-        webhookUrl($package),
-        ['ref' => 'refs/heads/main'],
-        ['X-GitHub-Event' => 'push']
-    );
+    $response = postSignedWebhook($this, $package, ['ref' => 'refs/heads/main'], 'push');
 
     $response->assertOk()
         ->assertJson(['status' => 'ok']);
@@ -201,11 +223,7 @@ it('does not dispatch SyncTokenPackages when package has no tokens', function ()
 
     $package = Package::factory()->github()->create();
 
-    $response = $this->postJson(
-        webhookUrl($package),
-        ['ref' => 'refs/heads/main'],
-        ['X-GitHub-Event' => 'push']
-    );
+    $response = postSignedWebhook($this, $package, ['ref' => 'refs/heads/main'], 'push');
 
     $response->assertOk()
         ->assertJson(['status' => 'ok']);

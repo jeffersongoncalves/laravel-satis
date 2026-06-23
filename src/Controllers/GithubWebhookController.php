@@ -9,6 +9,7 @@ use JeffersonGoncalves\LaravelSatis\Enums\PackageType;
 use JeffersonGoncalves\LaravelSatis\Jobs\SyncTenantPackages;
 use JeffersonGoncalves\LaravelSatis\Jobs\SyncTokenPackages;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
+use JeffersonGoncalves\WebhookSignatures\Verifiers\GithubSignatureVerifier;
 use Symfony\Component\HttpFoundation\Response;
 
 class GithubWebhookController extends Controller
@@ -46,19 +47,15 @@ class GithubWebhookController extends Controller
 
     protected function verifySignature(Request $request, ?string $secret): bool
     {
+        // Sem segredo configurado no pacote: nada para verificar, libera o webhook.
         if (blank($secret)) {
             return true;
         }
 
-        $signature = $request->header('X-Hub-Signature-256');
-
-        if ($signature === null) {
-            return true;
-        }
-
-        $payload = $request->getContent();
-        $expectedSignature = 'sha256='.hash_hmac('sha256', $payload, $secret);
-
-        return hash_equals($expectedSignature, $signature);
+        // Delega a verificação ao pacote jeffersongoncalves/laravel-webhook-signatures.
+        // O verificador faz HMAC-SHA256 do corpo bruto contra o header X-Hub-Signature-256
+        // (com fallback legado para X-Hub-Signature/sha1), usa hash_equals e é fail-closed
+        // (header ausente ou inválido => false).
+        return (new GithubSignatureVerifier)->verify($request, $secret);
     }
 }
