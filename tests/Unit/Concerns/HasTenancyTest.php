@@ -1,7 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
+
+beforeEach(function () {
+    // PackageObserver::created() dispatches ValidatePackageCredentialsJob
+    // (ShouldQueue). Undispatched, it runs inline on the sync queue driver,
+    // and any failure inside it is caught and swallowed by Laravel's sync
+    // queue handler - invisible here, but on Postgres it leaves the
+    // connection's transaction aborted, breaking every later query in the
+    // test with an unrelated "current transaction is aborted" error.
+    Queue::fake();
+});
 
 it('does not scope queries when tenancy is disabled', function () {
     config(['satis.tenancy.enabled' => false]);
