@@ -1,23 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use JeffersonGoncalves\LaravelSatis\Models\Package;
-
-beforeEach(function () {
-    if (! Schema::hasColumn('satis_packages', 'team_id')) {
-        Schema::table('satis_packages', function (Blueprint $table) {
-            $table->unsignedBigInteger('team_id')->nullable();
-        });
-    }
-
-    if (! Schema::hasColumn('satis_credentials', 'team_id')) {
-        Schema::table('satis_credentials', function (Blueprint $table) {
-            $table->unsignedBigInteger('team_id')->nullable();
-        });
-    }
-});
 
 it('does not scope queries when tenancy is disabled', function () {
     config(['satis.tenancy.enabled' => false]);

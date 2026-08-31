@@ -64,7 +64,7 @@ it('validates credentials always returns true', function () {
 });
 
 it('returns null for retrieveByToken', function () {
-    $result = $this->provider->retrieveByToken('id', 'token');
+    $result = $this->provider->retrieveByToken(999, 'token');
 
     expect($result)->toBeNull();
 });

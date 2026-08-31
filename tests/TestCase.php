@@ -91,6 +91,18 @@ abstract class TestCase extends Orchestra
             copy($stubsPath.'/'.$name.'.php.stub', $tempPath.'/'.sprintf('%03d_%s.php', $index, $name));
         }
 
+        // Test-only tenancy columns (HasTenancyTest): added as a real
+        // migration so migrate:fresh always includes them, rather than an
+        // ALTER TABLE inside the per-test transaction - which risked being
+        // rolled back along with everything else and never reliably
+        // recreated once RefreshDatabase's shared "already migrated" state
+        // was set.
+        $tenancyFixture = __DIR__.'/Fixtures/add_team_id_to_satis_tables.php.stub';
+        $tenancyTarget = $tempPath.'/999_add_team_id_to_satis_tables.php';
+        if (file_exists($tenancyFixture) && ! file_exists($tenancyTarget)) {
+            copy($tenancyFixture, $tenancyTarget);
+        }
+
         $this->loadMigrationsFrom($tempPath);
     }
 }
