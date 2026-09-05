@@ -6,6 +6,12 @@
 
 # Laravel Satis
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/jeffersongoncalves/laravel-satis.svg?style=flat-square)](https://packagist.org/packages/jeffersongoncalves/laravel-satis)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/laravel-satis/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/jeffersongoncalves/laravel-satis/actions?query=workflow%3Atests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/laravel-satis/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/jeffersongoncalves/laravel-satis/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
+[![PHPStan](https://img.shields.io/github/actions/workflow/status/jeffersongoncalves/laravel-satis/phpstan.yml?branch=main&label=PHPStan&style=flat-square)](https://github.com/jeffersongoncalves/laravel-satis/actions?query=workflow%3APHPStan+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/jeffersongoncalves/laravel-satis.svg?style=flat-square)](https://packagist.org/packages/jeffersongoncalves/laravel-satis)
+
 A Laravel package for managing private Composer repositories powered by [Satis](https://github.com/composer/satis).
 
 ## Features
@@ -375,6 +381,29 @@ php artisan migrate
    - `$package->username` → `$package->credential->email`
    - `$package->password` → `$package->credential->password`
    - `CreateAuthJson` → removed, no longer needed
+
+## Testing
+
+```bash
+composer test
+```
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+## Contributing
+
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
+
+## Security Vulnerabilities
+
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+
+## Credits
+
+- [Jefferson Gonçalves](https://github.com/jeffersongoncalves)
+- [All Contributors](../../contributors)
 
 ## License
 
