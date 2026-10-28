@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.1.3 - 2026-10-28
+
+- Tests load package migrations with jeffersongoncalves/pest-plugin-database-migrations instead of copying stubs by hand.
+- The configured token model must now extend `JeffersonGoncalves\LaravelSatis\Models\Token`. A model that only implemented `TokenContract` crashed with a TypeError when a GitHub webhook dispatched `SyncTokenPackages`; it is now rejected when resolved.
+
 ## v2.1.2 - 2026-05-23
 
 **Full Changelog**: https://github.com/jeffersongoncalves/laravel-satis/compare/v2.1.1...v2.1.2
