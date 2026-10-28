@@ -69,7 +69,7 @@ it('throws exception when token model does not extend Token', function () {
     config(['satis.models.token' => Credential::class]);
 
     ModelResolver::token();
-})->throws(InvalidArgumentException::class, 'must implement');
+})->throws(InvalidArgumentException::class, 'must extend');
 
 it('caches resolved models', function () {
     // First call resolves and caches
