@@ -64,6 +64,13 @@ it('throws exception when model does not implement contract', function () {
     ModelResolver::package();
 })->throws(InvalidArgumentException::class, 'must implement');
 
+it('throws exception when token model does not extend Token', function () {
+    // Credential is a model but not a Token subclass
+    config(['satis.models.token' => Credential::class]);
+
+    ModelResolver::token();
+})->throws(InvalidArgumentException::class, 'must implement');
+
 it('caches resolved models', function () {
     // First call resolves and caches
     $first = ModelResolver::package();

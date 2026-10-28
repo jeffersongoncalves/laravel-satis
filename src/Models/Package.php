@@ -96,6 +96,7 @@ class Package extends Model implements PackageContract
         return $this->belongsTo(ModelResolver::credential());
     }
 
+    /** @return BelongsToMany<Token, $this> */
     public function tokens(): BelongsToMany
     {
         $tokenModel = ModelResolver::token();
