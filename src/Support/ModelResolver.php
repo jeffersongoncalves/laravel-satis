@@ -11,7 +11,7 @@ use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageDownloadContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageReleaseContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackageTokenContract;
 use JeffersonGoncalves\LaravelSatis\Models\Contracts\PackagistContract;
-use JeffersonGoncalves\LaravelSatis\Models\Contracts\TokenContract;
+use JeffersonGoncalves\LaravelSatis\Models\Token;
 
 class ModelResolver
 {
@@ -28,9 +28,15 @@ class ModelResolver
         return static::resolve('package', PackageContract::class);
     }
 
+    /**
+     * Jobs such as SyncTokenPackages type-hint the concrete model, so a
+     * custom token model must extend Token, not just implement the contract.
+     *
+     * @return class-string<Token>
+     */
     public static function token(): string
     {
-        return static::resolve('token', TokenContract::class);
+        return static::resolve('token', Token::class);
     }
 
     public static function dependency(): string
@@ -64,8 +70,10 @@ class ModelResolver
     }
 
     /**
-     * @param  class-string  $contract
-     * @return class-string
+     * @template T of object
+     *
+     * @param  class-string<T>  $contract
+     * @return class-string<T>
      *
      * @throws InvalidArgumentException
      */

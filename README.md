@@ -116,6 +116,8 @@ Override any model to extend the default behavior:
 ],
 ```
 
+Custom models must implement the matching contract. The token model must also extend `JeffersonGoncalves\LaravelSatis\Models\Token`.
+
 ### Storage
 
 ```php
