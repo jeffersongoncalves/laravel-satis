@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.1.4 - 2026-10-28
+
+- The model resolver error now says "must extend" when the token model is not a `Token` subclass, and keeps "must implement" for interface contracts.
+
 ## v2.1.3 - 2026-10-28
 
 - Tests load package migrations with jeffersongoncalves/pest-plugin-database-migrations instead of copying stubs by hand.
