@@ -94,7 +94,7 @@ class ModelResolver
 
         if (! is_a($model, $contract, true)) {
             throw new InvalidArgumentException(
-                "Model [{$model}] must implement [{$contract}]."
+                sprintf('Model [%s] must %s [%s].', $model, interface_exists($contract) ? 'implement' : 'extend', $contract)
             );
         }
 
